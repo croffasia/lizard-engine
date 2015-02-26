@@ -16,11 +16,8 @@
     "express-session": "^1.10.3",
     "inherits": "^2.0.1",
     "mongoose": "^3.8.24",
-    "node-regexp": "^0.1.1",
     "nunjucks": "^1.2.0",
-    "nunjucks-mongoose": "^0.2.3",
     "passport": "^0.2.1",
-    "underscore": "^1.8.2",
-    "view-engine": "^1.1.0"
+    "underscore": "^1.8.2"
   }
 }
