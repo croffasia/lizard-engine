@@ -11,8 +11,6 @@ var Modules = function(){
 
 Modules.prototype.LoadModules = function(){
     this.loaded_modules = lizard.import(lizard.get('modules dir'));
-
-    console.log(require('util').inspect(this.loaded_modules));
 };
 
 Modules.prototype.GelModulesForControll = function(){

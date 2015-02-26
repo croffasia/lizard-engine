@@ -4,7 +4,8 @@
 
 var lizard = require('lizard-engine'),
     async = require('async'),
-    path = require('path');
+    path = require('path'),
+    regexp = require('node-regexp');
 
 var View = function(_req, _res, _module){
     this.locals = {};
@@ -139,27 +140,59 @@ View.prototype.render = function(template, cb){
 
             lizard.template_engine.render(currentTemplate, context.locals, function(render_error, render_content){
 
-                CheckComponentsRunner(render_content);
-
-                if(cb != undefined && typeof cb === "function")
+                context.ComponentsRunner(render_content, function(runableContent)
                 {
-                    cb(render_content);
-                } else {
-                    context.res.set('Content-Type', 'text/html; charset=utf-8');
-                    context.res.send(render_content);
-                    context.res.end();
-                }
+                    if(cb != undefined && typeof cb === "function")
+                    {
+                        cb(runableContent);
+                    } else {
+                        context.res.set('Content-Type', 'text/html; charset=utf-8');
+                        context.res.send(runableContent);
+                        context.res.end();
+                    }
+                });
             });
 
         } else { if(cb == undefined) throw  Error("Error render"); else cb(""); }
     });
 };
 
-function CheckComponentsRunner(content){
-    var myRe = new RegExp("/\[\[.*\]\]/", "g");
-    var myArray = myRe.exec(content);
+View.prototype.ComponentsRunner = function(content, cb){
 
-    console.log(require('util').inspect(myArray));
+    var re = /\[\[(.*?)\]\]/g;
+    var results = [];
+    var replacedContent = content;
+
+    while( res = re.exec(content) ) {
+        results.push(res[1]);
+    }
+
+    var context = this;
+
+    if(results.length > 0)
+    {
+        var series = [];
+        for(var i = 0; i < results.length; i++)
+        {
+            var tag = results[i];
+
+            series.push(function(next){
+                lizard.Plugins.Run(context, 'component', tag, context.req, context.res, function(plugin_content){
+                    replacedContent = replacedContent.replace("[["+tag+"]]", plugin_content);
+                    next(null, replacedContent);
+                });
+            });
+        }
+
+        async.series(series, function(err, result){
+            cb(replacedContent);
+        });
+    } else {
+        cb(replacedContent);
+    }
+
+    //console.log(require('util').inspect(res));
+    //console.log(require('util').inspect(myArray));
 };
 
 module.exports = View;
