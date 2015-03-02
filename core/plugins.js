@@ -11,10 +11,12 @@ var Plugins = function(){
 };
 
 Plugins.prototype.LoadPlugins = function(){
-    var localPlugins = lizard.import(lizard.get('plugins dir'));
+    var localPlugins = lizard.import(lizard.get('plugins dir'), true);
     var systemPlugins = lizard.import( "node_modules"+path.sep+"lizard-engine"+path.sep+""+lizard.get('plugins dir'));
 
     this.loaded_plugins = _.extend(localPlugins, systemPlugins);
+
+    //console.log(require('util').inspect(this.loaded_plugins));
 };
 
 Plugins.prototype.Get = function(plugin)
@@ -36,7 +38,9 @@ Plugins.prototype.Run = function(context, plugin)
     if(controller != null)
     {
         var pluginArguments = Array.prototype.slice.call(arguments, 2);
-        controller.apply(context, pluginArguments);
+        return controller.apply(context, pluginArguments);
+    } else {
+        return false;
     }
 };
 

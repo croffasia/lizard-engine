@@ -5,9 +5,10 @@
 var lizard = require('lizard-engine'),
     async = require('async'),
     path = require('path'),
-    regexp = require('node-regexp');
+    validator = require('validator'),
+    _ = require('underscore');
 
-var View = function(_req, _res, _module){
+var View = function(_req, _res, _module, root_template_dir){
     this.locals = {};
     this.res = _res;
     this.req = _req;
@@ -15,6 +16,12 @@ var View = function(_req, _res, _module){
 
     this.queueInit = [];
     this.queueAction = [];
+
+    if(root_template_dir == undefined)
+        root_template_dir = lizard.get('project dir')
+
+    this.template_engine = require("../lib/templates/"+lizard.get('template engine'));
+    this.template_engine.init(root_template_dir);
 };
 
 View.prototype.on = function()
@@ -138,9 +145,13 @@ View.prototype.render = function(template, cb){
 
             context.locals.template_dir = lizard.get('template dir');
 
-            lizard.template_engine.render(currentTemplate, context.locals, function(render_error, render_content){
+            var variables = _.extend(context.locals, context.res.locals);
 
-                context.ComponentsRunner(render_content, function(runableContent)
+            //console.log("VARIABLES:"+require('util').inspect(variables));
+
+            context.template_engine.render(currentTemplate, variables, function(render_error, render_content){
+
+                context.ExtendComponents(render_content, function(runableContent)
                 {
                     if(cb != undefined && typeof cb === "function")
                     {
@@ -157,7 +168,7 @@ View.prototype.render = function(template, cb){
     });
 };
 
-View.prototype.ComponentsRunner = function(content, cb){
+View.prototype.ExtendComponents = function(content, cb){
 
     var re = /\[\[(.*?)\]\]/g;
     var results = [];
@@ -174,14 +185,30 @@ View.prototype.ComponentsRunner = function(content, cb){
         var series = [];
         for(var i = 0; i < results.length; i++)
         {
-            var tag = results[i];
+            var exp = results[i].split("|");
+            var tag = validator.trim(exp[0]);
+            var options = {};
+            var tag_replaced = results[i];
 
-            series.push(function(next){
-                lizard.Plugins.Run(context, 'component', tag, context.req, context.res, function(plugin_content){
-                    replacedContent = replacedContent.replace("[["+tag+"]]", plugin_content);
-                    next(null, replacedContent);
-                });
-            });
+            if(exp.length > 1)
+                options = JSON.parse(validator.trim(exp[1]));
+
+            var execution = function(_tag, _tag_replaced, _options)
+            {
+                var __tag = _tag;
+                var __tag_replaced = _tag_replaced;
+                var __options = _options;
+
+                return function(next){
+                    lizard.Plugins.Run(context, 'component', __tag, context.req, context.res, __options, function(plugin_content){
+                        console.log("REPLACE "+__tag_replaced);
+                        replacedContent = replacedContent.replace("[["+__tag_replaced+"]]", plugin_content);
+                        next(null);
+                    });
+                };
+            };
+
+            series.push(execution(tag, tag_replaced, options));
         }
 
         async.series(series, function(err, result){
@@ -190,9 +217,6 @@ View.prototype.ComponentsRunner = function(content, cb){
     } else {
         cb(replacedContent);
     }
-
-    //console.log(require('util').inspect(res));
-    //console.log(require('util').inspect(myArray));
 };
 
 module.exports = View;

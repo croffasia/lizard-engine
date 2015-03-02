@@ -1,0 +1,50 @@
+{% extends template_dir + "/layout/login.html" %}
+
+{% block body %}
+
+<div id="login-box">
+    <div id="login-box-holder">
+        <div class="row">
+            <div class="col-xs-12">
+                <header id="login-header">
+                    <div id="login-logo">
+                        <img src="/public/cp/img/logo.png" alt=""/>
+                    </div>
+                </header>
+                <div id="login-box-inner">
+                    {% for message in flash_message_error %}
+                    <div class="alert alert-danger alert-dismissable">
+                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    <form role="form" method="post" id="loginform" action="?">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                            <input class="form-control" id="user-signin-email" name="email" type="text" placeholder="Email address">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                            <input type="password" id="user-signin-password" name="password" class="form-control" placeholder="Password">
+                            <input type="hidden" name="action" value="cp.login">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <a href="#" id="user-signin" class="btn btn-success col-xs-12">Войти</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#user-signin").click(function(e){
+        e.preventDefault();
+        $("#loginform").submit();
+    });
+</script>
+{% endblock %}

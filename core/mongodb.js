@@ -3,9 +3,12 @@
  */
 var lizard = require('lizard-engine');
 
-var MongoDB = function(){};
+var Database = function(){
+    this.mongoose = require('mongoose');
+    this.connection = null;
+};
 
-MongoDB.prototype.connect = function(){
+Database.prototype.connect = function(){
 
     var user = lizard.get('mongodb user');
     var password = lizard.get('mongodb password');
@@ -13,7 +16,7 @@ MongoDB.prototype.connect = function(){
     var credentials = "";
     if(user && password) credentials += user+":"+password+"@";
 
-    lizard.mongoose.connect("mongodb://"+credentials+""+lizard.get('mongodb host')+":"+lizard.get('mongodb port')+"/"+lizard.get('mongodb db'));
+    this.connection = this.mongoose.connect("mongodb://"+credentials+""+lizard.get('mongodb host')+":"+lizard.get('mongodb port')+"/"+lizard.get('mongodb db'));
 };
 
-module.exports = new MongoDB();
+module.exports = new Database();

@@ -1,0 +1,27 @@
+<!--li class="nav-header hidden-sm hidden-xs">
+    Components
+</li-->
+{% if modules %}
+    {% for menuItem in modules %}
+        {% if menuItem.cp %}
+            {% for controlItem in menuItem.cp %}
+                <li {% if current_key == controlItem.key %}class="active"{% endif %}>
+
+                    <a href="{{ controlItem.href }}" class="dropdown-toggle">
+                        <i class="fa {{ controlItem.icon }}"></i>
+                        <span>{{ controlItem.label }}</span>
+                        <i class="fa fa-angle-right drop-icon"></i>
+                    </a>
+
+                    {% if controlItem.items %}
+                        <ul class="submenu">
+                            {% for submenuItem in controlItem.items %}
+                                <li {% if current_sub_key == submenuItem.key %}class="active"{% endif %}><a href="{{ controlItem.href }}/{{ submenuItem.href }}">{{ submenuItem.label }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endif %}

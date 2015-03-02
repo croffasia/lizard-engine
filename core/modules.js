@@ -9,8 +9,20 @@ var Modules = function(){
     this.loaded_modules = {};
 };
 
-Modules.prototype.LoadModules = function(){
-    this.loaded_modules = lizard.import(lizard.get('modules dir'));
+Modules.prototype.LoadModules = function(cb){
+
+    var loaded_engine_modules = lizard.importLocal(lizard.get('modules dir'), true);
+    var local_loaded_modules = lizard.import(lizard.get('modules dir'), true);
+
+    this.loaded_modules = _.extend(local_loaded_modules, loaded_engine_modules);
+
+    for(var key in this.loaded_modules)
+    {
+        delete this.loaded_modules[key][lizard.get('models dir')];
+    }
+
+    if(cb) cb();
+    //console.log(require('util').inspect(this.loaded_modules));
 };
 
 Modules.prototype.GelModulesForControll = function(){
@@ -24,7 +36,7 @@ Modules.prototype.GelModulesForControll = function(){
             if (_.has(this.loaded_modules[key], 'info')
                 && _.has(this.loaded_modules[key]['info'], 'settings')
                 && _.has(this.loaded_modules[key]['info']['settings'], 'cp')
-                && _.has(this.loaded_modules[key]['info']['settings']['cp'] == true)){
+                && this.loaded_modules[key]['info']['settings']['cp'] == true){
 
                 results.push(this.loaded_modules[key]['info']);
             }
@@ -50,6 +62,8 @@ Modules.prototype.isControllPanel = function(module_name)
 
 Modules.prototype.Module = function(module)
 {
+    module = module.toLowerCase();
+
     if(_.has(this.loaded_modules, module))
     {
         return this.loaded_modules[module];
@@ -60,6 +74,8 @@ Modules.prototype.Module = function(module)
 
 Modules.prototype.Info = function(module)
 {
+    module = module.toLowerCase();
+
     if(_.has(this.loaded_modules, module) && _.has(this.loaded_modules[module], "info"))
     {
         return this.loaded_modules[module]['info'];
@@ -72,9 +88,11 @@ Modules.prototype.Model = function(module_name, model){
 
     var module = this.Module(module_name);
 
-    if(module != null && _.has(module, lizard.get('models dir')))
+    model = model.toLowerCase();
+
+    if(_.has(lizard.models, model))
     {
-        var controller = this.GetByPath(model, module[lizard.get('models dir')]);
+        var controller = lizard.models[model];
 
         if(controller != null)
         {
@@ -88,6 +106,8 @@ Modules.prototype.Model = function(module_name, model){
 Modules.prototype.Component = function(module_name, component){
 
     var module = this.Module(module_name);
+
+    component = component.toLowerCase();
 
     if(module != null && _.has(module, lizard.get('component dir')))
     {
@@ -105,6 +125,8 @@ Modules.prototype.Component = function(module_name, component){
 Modules.prototype.Controller = function(module_name, controller){
 
     var module = this.Module(module_name);
+
+    controller = controller.toLowerCase();
 
     if(module != null && _.has(module, lizard.get('controllers dir')))
     {
