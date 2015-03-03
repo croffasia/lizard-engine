@@ -60,25 +60,27 @@ Modules.prototype.isControllPanel = function(module_name)
     return false;
 };
 
-Modules.prototype.Module = function(module)
+Modules.prototype.Module = function(_module)
 {
-    module = module.toLowerCase();
+    if(_module == undefined) return null;
+    _module = _module.toLowerCase();
 
-    if(_.has(this.loaded_modules, module))
+    if(_.has(this.loaded_modules, _module))
     {
-        return this.loaded_modules[module];
+        return this.loaded_modules[_module];
     }
 
     return null;
 };
 
-Modules.prototype.Info = function(module)
+Modules.prototype.Info = function(_module)
 {
-    module = module.toLowerCase();
+    if(_module == undefined) return null;
+    _module = _module.toLowerCase();
 
-    if(_.has(this.loaded_modules, module) && _.has(this.loaded_modules[module], "info"))
+    if(_module != null && _.has(_module, "info"))
     {
-        return this.loaded_modules[module]['info'];
+        return _module['info'];
     }
 
     return null;
@@ -86,8 +88,7 @@ Modules.prototype.Info = function(module)
 
 Modules.prototype.Model = function(module_name, model){
 
-    var module = this.Module(module_name);
-
+    if(model == undefined) return null;
     model = model.toLowerCase();
 
     if(_.has(lizard.models, model))
@@ -105,13 +106,14 @@ Modules.prototype.Model = function(module_name, model){
 
 Modules.prototype.Component = function(module_name, component){
 
-    var module = this.Module(module_name);
+    if(component == undefined) return null;
+    var _module = this.Module(module_name);
 
     component = component.toLowerCase();
 
-    if(module != null && _.has(module, lizard.get('component dir')))
+    if(_module != null && _.has(_module, lizard.get('component dir')))
     {
-        var controller = this.GetByPath(component, module[lizard.get('component dir')]);
+        var controller = this.GetByPath(component, _module[lizard.get('component dir')]);
 
         if(controller != null)
         {
@@ -124,13 +126,15 @@ Modules.prototype.Component = function(module_name, component){
 
 Modules.prototype.Controller = function(module_name, controller){
 
-    var module = this.Module(module_name);
+    if(controller == undefined) return null;
+
+    var _module = this.Module(module_name);
 
     controller = controller.toLowerCase();
 
-    if(module != null && _.has(module, lizard.get('controllers dir')))
+    if(_module != null && _.has(_module, lizard.get('controllers dir')))
     {
-        var controller = this.GetByPath(controller, module[lizard.get('controllers dir')]);
+        var controller = this.GetByPath(controller, _module[lizard.get('controllers dir')]);
 
         if(controller != null)
         {

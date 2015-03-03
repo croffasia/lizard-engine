@@ -1,22 +1,24 @@
-<!--li class="nav-header hidden-sm hidden-xs">
-    Components
-</li-->
+<li class="nav-header hidden-sm hidden-xs">
+    {{current_key}} - {{current_sub_key}}
+</li>
 {% if modules %}
     {% for menuItem in modules %}
         {% if menuItem.cp %}
             {% for controlItem in menuItem.cp %}
-                <li {% if current_key == controlItem.key %}class="active"{% endif %}>
+                <li {% if current_key == controlItem.route %}class="active"{% endif %}>
 
-                    <a href="{{ controlItem.href }}" class="dropdown-toggle">
+                    <a href="/cp/{{ controlItem.route }}" {% if controlItem.items.length > 0 %}class="dropdown-toggle"{% endif %}>
                         <i class="fa {{ controlItem.icon }}"></i>
                         <span>{{ controlItem.label }}</span>
-                        <i class="fa fa-angle-right drop-icon"></i>
+                        {% if controlItem.items %}<i class="fa fa-angle-right drop-icon"></i>{% endif %}
                     </a>
 
                     {% if controlItem.items %}
                         <ul class="submenu">
                             {% for submenuItem in controlItem.items %}
-                                <li {% if current_sub_key == submenuItem.key %}class="active"{% endif %}><a href="{{ controlItem.href }}/{{ submenuItem.href }}">{{ submenuItem.label }}</a></li>
+                                {% if submenuItem.visible != false %}
+                                    <li><a {% if current_sub_key == submenuItem.route %}class="active"{% endif %} href="/cp/{{ controlItem.route }}/{{ submenuItem.route }}">{{ submenuItem.label }}</a></li>
+                                {% endif %}
                             {% endfor %}
                         </ul>
                     {% endif %}

@@ -9,7 +9,7 @@ var lizard = require('lizard-engine'),
 
 module.exports = function(req, res){
 
-    var view = new lizard.View(req, res, module.id, lizard.get('engine dir'));
+    var view = new lizard.View(req, res, module.id);
 
     var ControlModel = lizard.Modules.Model("cp", "ControlUsers");
 
@@ -39,7 +39,6 @@ module.exports = function(req, res){
 
         if(email != "" && password != ""){
             ControlModel.model.Login(email, password, function(err, results){
-                console.log(err, results);
 
                 if(err == null && results != null && results._id != "")
                 {
@@ -63,7 +62,8 @@ module.exports = function(req, res){
         return;
     });
 
-    view.locals.flash_message_error = req.flash('error');
+    if(_.has(req, 'flash'))
+        view.locals.flash_message_error = req.flash('error');
 
     view.render('login.html');
 

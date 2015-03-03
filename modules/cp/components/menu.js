@@ -8,23 +8,23 @@ var lizard = require('lizard-engine'),
 
 module.exports = function(req, res, options, render){
 
-    var view = new lizard.View(req, res, module.id, lizard.get('engine dir'));
+    var view = new lizard.View(req, res, module.id);
     var locals = view.locals;
 
     view.on('init', function(next){
 
         var url = req.url.split("/");
 
-        if(url.length > 1)
-            locals.current_key = url[1];
+        locals.current_key = "";
+        locals.current_sub_key = "";
 
         if(url.length > 2)
-            locals.current_sub_key = url[2];
+            locals.current_key = url[2];
 
-        console.log("current key: "+locals.current_key);
+        if(url.length > 3)
+            locals.current_sub_key = url[3];
 
         locals.modules = lizard.Modules.GelModulesForControll();
-
 
         next();
 

@@ -10,6 +10,10 @@ var inherits = require('inherits'),
 
 var BaseEngineOptions = require('./core/options');
 
+global.__INSPECT = function(object, pre){
+    console.log(pre, require('util').inspect(object));
+}
+
 var moduleRoot = (function(_rootPath) {
     var parts = _rootPath.split(path.sep);
     parts.pop();
@@ -22,7 +26,7 @@ var engineRoot = (function(_rootPath) {
     return parts.join(path.sep);
 })(module.paths[0]);
 
-console.log(engineRoot);
+//console.log(engineRoot);
 
 var LizardEngine = function(){
 	this._options = {

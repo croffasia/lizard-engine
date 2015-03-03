@@ -6,36 +6,59 @@ var lizard = require('lizard-engine'),
     validator = require('validator'),
     _ = require('underscore');
 
+var _LOGIN_URL = "/cp/login";
+
 module.exports = function(req, res){
 
-    console.log(require('util').inspect(req.url));
-    var request_array = req.url.split("/");
-
-    if(request_array && request_array.length > 1) {
-        if (request_array.length > 2) {
-            var url_module = request_array[1];
-            var module = lizard.Modules.Module(url_module);
-
-            if(module != null)
-            {
-
-            }
-        }
-    }
-
-    res.send("1");
-    return res.end();
-
     if (lizard.Plugins.Run(this, 'auth.check', req, res) == false)
-        return res.redirect("/cp/login");
+        return res.redirect(_LOGIN_URL);
 
-    var view = new lizard.View(req, res, module.id, lizard.get('engine dir'));
+    var view = new lizard.View(req, res, module.id);
     var locals = view.locals;
 
     locals.title = "Dashboard";
 
     view.on('init', function(next){
-        next();
+
+        var url = req.url.split("/");
+
+        var current_key = "";
+        var current_sub_key = "";
+
+        if(url.length > 2)
+            current_key = url[2];
+
+        if(url.length > 3)
+            current_sub_key = url[3];
+
+        var findAction = lizard.Plugins.Run(null, 'controls', current_key, current_sub_key);
+        var routing = "";
+
+        if(findAction.controller != "")
+        {
+            var controller = lizard.Modules.Controller(findAction.name, findAction.controller.component);
+            if(controller != null)
+            {
+                controller.call(null, req, res, function(result_content){
+                    locals.cp_body_content = result_content;
+                    next();
+                });
+            } else {
+                next();
+            }
+        } else {
+            var controller = lizard.Modules.Controller(findAction.name, findAction.module.component);
+            if(controller != null)
+            {
+                controller.call(null, req, res, function(result_content){
+                    locals.cp_body_content = result_content;
+                    next();
+                });
+            } else {
+                next();
+            }
+        }
+
     });
 
     view.render('index.html');

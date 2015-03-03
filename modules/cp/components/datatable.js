@@ -27,7 +27,6 @@ module.exports = function(req, res, options, render){
 
         if(email != "" && password != ""){
             UserModel.model.Signin(email, password, function(err, results){
-                console.log(err, results);
                 res.json({err: err, res: results});
             });
         } else {

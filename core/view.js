@@ -8,7 +8,7 @@ var lizard = require('lizard-engine'),
     validator = require('validator'),
     _ = require('underscore');
 
-var View = function(_req, _res, _module, root_template_dir){
+var View = function(_req, _res, _module){
     this.locals = {};
     this.res = _res;
     this.req = _req;
@@ -17,11 +17,13 @@ var View = function(_req, _res, _module, root_template_dir){
     this.queueInit = [];
     this.queueAction = [];
 
-    if(root_template_dir == undefined)
-        root_template_dir = lizard.get('project dir')
+    if(_module != undefined && _module != "")
+        this.sub_templates_dir = GetRootDirFromID(this.module.replace(lizard.get('project dir'), ""));
+    else
+        this.sub_templates_dir = "";
 
     this.template_engine = require("../lib/templates/"+lizard.get('template engine'));
-    this.template_engine.init(root_template_dir);
+    this.template_engine.init(lizard.get('project dir'));
 };
 
 View.prototype.on = function()
@@ -126,6 +128,31 @@ function GetModuleFromID(id)
     return "";
 };
 
+function GetRootDirFromID(id)
+{
+    var dir = id.split(path.sep);
+    if(dir && dir.length > 0)
+    {
+        i = 0;
+        var modulesDirName = lizard.get('modules dir');
+        var path_to_root = [];
+
+        while(i < dir.length)
+        {
+            if(dir[i] == modulesDirName)
+            {
+                return path_to_root.join('/');
+            } else {
+                path_to_root.push(dir[i]);
+            }
+
+            i++;
+        }
+    }
+
+    return "";
+};
+
 View.prototype.render = function(template, cb){
 
     var module = (this.module != undefined)?GetModuleFromID(this.module):"";
@@ -136,18 +163,17 @@ View.prototype.render = function(template, cb){
     {
         if(error == null)
         {
-            var currentTemplate = lizard.get('template dir')+"/"+template;
+            var currentTemplate = context.sub_templates_dir+"/"+lizard.get('template dir')+"/"+template;
+
             if(module != "")
             {
-                context.locals.module_template_dir = lizard.get('modules dir')+"/"+module+"/"+lizard.get('template dir');
+                context.locals.module_template_dir = context.sub_templates_dir+"/"+lizard.get('modules dir')+"/"+module+"/"+lizard.get('template dir');
                 currentTemplate = context.locals.module_template_dir + "/"+template;
             }
 
-            context.locals.template_dir = lizard.get('template dir');
+            context.locals.template_dir = context.sub_templates_dir+"/"+lizard.get('template dir');
 
             var variables = _.extend(context.locals, context.res.locals);
-
-            //console.log("VARIABLES:"+require('util').inspect(variables));
 
             context.template_engine.render(currentTemplate, variables, function(render_error, render_content){
 
@@ -201,7 +227,6 @@ View.prototype.ExtendComponents = function(content, cb){
 
                 return function(next){
                     lizard.Plugins.Run(context, 'component', __tag, context.req, context.res, __options, function(plugin_content){
-                        console.log("REPLACE "+__tag_replaced);
                         replacedContent = replacedContent.replace("[["+__tag_replaced+"]]", plugin_content);
                         next(null);
                     });

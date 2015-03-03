@@ -1,4 +1,8 @@
 {
   "id": "cp",
-  "name": "Control Panel"
+  "name": "Control Panel",
+
+  "settings": { "cp": true },
+
+  "cp": [{"route": "", "component": "dashboard", "label" : "Панель управления", "icon": "fa fa-table"}]
 }

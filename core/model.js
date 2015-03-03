@@ -36,8 +36,6 @@ Model.prototype.add = function()
                     var type = args[i][key].type;
                     var typeExec = (typeof type === 'function')?type:lizard.Field.Types[type];
 
-                    console.log();
-
                     if(typeExec){
                         types[key] = new typeExec(this.schema, args[i][key], key);
                     } else {

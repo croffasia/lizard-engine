@@ -10,9 +10,8 @@ var lizard = require('lizard-engine'),
 
 module.exports = function(req, res, options, render){
 
-    var view = new lizard.View(req, res, module.id, lizard.get('engine dir'));
+    var view = new lizard.View(req, res, module.id);
     var locals = view.locals;
-
 
     view.on('init', function(next){
 
@@ -21,33 +20,20 @@ module.exports = function(req, res, options, render){
         locals.current_key = "";
         locals.current_sub_key = "";
 
-        if(url.length > 1)
-            locals.current_key = url[1];
+        locals.current_category_label = "";
+        locals.current_subcategory_label = "";
 
         if(url.length > 2)
-            locals.current_sub_key = url[2];
+            locals.current_key = url[2];
 
-        console.log("current key: "+locals.current_key);
+        if(url.length > 3)
+            locals.current_sub_key = url[3];
 
         locals.modules = lizard.Modules.GelModulesForControll();
+        var findAction = lizard.Plugins.Run(null, 'controls', locals.current_key, locals.current_sub_key);
 
-        if(locals.modules != null)
-        {
-            find:
-            for(var i = 0; i < locals.modules.length; i++)
-            {
-                if(_.has(locals.modules[i], 'cp'))
-                {
-                    for(var c = 0; c < locals.modules[i].control.length; c++) {
-                        if (locals.current_key == locals.modules[i].control[c].key)
-                        {
-                            locals.current_category_label = locals.modules[i].control[c].label;
-                            break find;
-                        }
-                    }
-                }
-            }
-        }
+        locals.current_category_label = findAction.module.label;
+        locals.current_subcategory_label = (findAction.controller.label!=undefined)?findAction.controller.label:"";
 
         next();
 

@@ -2,7 +2,8 @@
     <div class="col-lg-12">
         <div class="row">
             <div class="col-lg-12">
-                <h1>{{ current_category_label }}</h1>
+                <h1 style="margin-bottom: 0px; padding-bottom: 0px;">{{ current_subcategory_label if current_subcategory_label != "" else current_category_label  }}</h1>
+                <span style="padding-left: 15px;">Модуль: {{current_category_label}}</span>
             </div>
         </div>
     </div>
