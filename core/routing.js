@@ -25,15 +25,12 @@ Routing.prototype.Mapping = function(){
     var modules = lizard.Modules.loaded_modules;
     var context = this;
 
-    //console.log(require('util').inspect(lizard.Modules.Module('cp')));
-    //var router = lizard.express.app.Router();
-
     context.ApplyMapping("/", lizard.get('main controller'));
 
     //lizard.express.app.all('/', lizard.Modules.Module('cp').controllers.login);
-    lizard.express.app.all('/cp/login', lizard.Modules.Module('cp').controllers.login);
-    lizard.express.app.all('/cp/*', lizard.Modules.Module('cp').controllers.index);
-    lizard.express.app.all('/cp', lizard.Modules.Module('cp').controllers.index);
+    //lizard.express.app.all('/cp/login', lizard.Modules.Module('cp').controllers.login);
+    //lizard.express.app.all('/cp/*', lizard.Modules.Module('cp').controllers.index);
+    //lizard.express.app.all('/cp', lizard.Modules.Module('cp').controllers.index);
 
     if(modules != null)
     {
@@ -57,8 +54,6 @@ Routing.prototype.Mapping = function(){
                 this.routes_map = _.extend(this.routes_map, modules_map);
             }
         }
-
-        //this.routes_map = _.extend(this.routes_map, system_auto_map);
     }
 }
 
@@ -76,7 +71,7 @@ Routing.prototype.ApplyMapping = function(rules, action) {
 
         if(controller != null)
         {
-            lizard.express.app.all(rules, controller);
+            lizard.Application.app.all(rules, controller);
         }
     }
 }

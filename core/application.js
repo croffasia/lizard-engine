@@ -5,9 +5,8 @@ var lizard = require('lizard-engine'),
     cookieParser = require('cookie-parser'),
     bodyParser   = require('body-parser'),
     session = require('express-session'),
-    //session = require('cookie-session'),
-    compression = require('compression'),
-    moment = require('moment');
+    compression = require('compression');
+    //moment = require('moment');
 
 var Application = function(){};
 
@@ -24,8 +23,7 @@ Application.prototype.init = function(configureCallback){
     this.app.use('/public/cp', express.static(lizard.get('engine dir') + '/'+lizard.get('static dir')));
 
     //this.app.set('trust proxy', 1);
-    this.app.use(cookieParser())
-    //this.app.use(session({keys: [lizard.get('cookies secret')]}));
+    this.app.use(cookieParser());
 
     this.app.use(session({
         secret: lizard.get('cookies secret'),
@@ -41,12 +39,14 @@ Application.prototype.init = function(configureCallback){
     this.app.use(bodyParser.urlencoded({ extended: false }));
 
     this.app.use(function (req, res, next) {
-        //console.log(moment().format('MMMM Do, hh:mm:ss', ":"), req.url);
+        var mem = process.memoryUsage();
+        var mem_info = (mem.heapUsed / 1048576).toFixed(3) + " / " +(mem.heapTotal / 1048576).toFixed(3) + " MB";
+        console.log(mem_info+" :: ", req.url);
         next();
     });
 
     this.app.use(function (req, res, next) {
-        //console.log(":::"+require('util').inspect(req.session));
+
         lizard.Plugins.Run(this, 'auth.get', req, function(result){
             res.locals.user = result;
             next();
@@ -83,9 +83,7 @@ Application.prototype.start = function()
         res.type('txt').send('Not found');
     });
 
-    var context = this;
     this.server = this.app.listen(process.env.PORT || lizard.get('port'), function(){
-
         console.log('Lizard Web Application listening at 127.0.0.1:%s', lizard.get('port'))
     });
 }

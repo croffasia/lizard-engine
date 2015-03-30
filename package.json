@@ -1,6 +1,6 @@
 {
   "name": "lizard-engine",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "NodeJS Web Application Platform",
   "main": "index.js",
   "scripts": {
@@ -13,30 +13,26 @@
     "body-parser": "^1.12.0",
     "compression": "^1.4.1",
     "connect-flash": "^0.1.1",
-    "connect-mongo": "^0.7.0",
-    "connect-mongostore": "^0.1.4",
     "cookie-parser": "^1.3.4",
     "cookie-session": "^1.1.0",
     "crypto-js": "^3.1.2-5",
     "express": "~4.0.0",
-    "express-messages": "0.0.2",
     "express-session": "^1.10.3",
-    "inherits": "^2.0.1",
-    "moment": "^2.9.0",
-    "mongoose": "^3.8.24",
-    "node-gettext": "^1.0.1",
+    "mongodb": "^2.0.25",
     "numeral": "^1.5.3",
     "nunjucks": "^1.2.0",
-    "passport": "^0.2.1",
-    "transliteration.cyr": "^1.0.4",
     "underscore": "^1.8.2",
-    "validator": "^3.32.0"
+    "validator": "^3.36.0"
   },
   "gitHead": "bba7728231a04653e476324ecd72be74dd004293",
   "readme": "# lizard-engine\nNodeJS Web Application Platform\n\n",
   "readmeFilename": "README.md",
   "_id": "lizard-engine@0.0.1",
-  "_shasum": "9a91de6aa08b8c6b47368077d5e76edddbc6aad1",
-  "_from": "../../../../var/folders/0z/7hm_l8493_v0v5pdyyjgz6500000gn/T/npm-26202-bd5ecc90/git-cache-e9fa1c802dad/bba7728231a04653e476324ecd72be74dd004293",
-  "_resolved": "git+https://git@github.com/PoluosmakAndrew/lizard-engine.git#bba7728231a04653e476324ecd72be74dd004293"
+  "_shasum": "96b78c0e5cfce3cd597ab41ed11dcf499483d698",
+  "_from": "../../../../tmp/npm-70361-3c4f4be2/git-cache-5bfbbfcc0a70/d02ac97512c3fd0dc10020ea8d01291781c03066",
+  "_resolved": "git+https://git@github.com/PoluosmakAndrew/lizard-engine.git#d02ac97512c3fd0dc10020ea8d01291781c03066",
+  "devDependencies": {
+    "mocha": "^2.2.1",
+    "should": "^5.2.0"
+  }
 }

@@ -28,9 +28,11 @@ var View = function(_req, _res, _module){
 
 View.prototype.on = function()
 {
-    var action = arguments[0];
-    var params = (arguments[1] instanceof Object)?arguments[1]:null;
-    var cb = (typeof arguments[1] === "function")?arguments[1]:arguments[2];
+    var $_len = arguments.length;var args = new Array($_len); for(var $_i = 0; $_i < $_len; ++$_i) {args[$_i] = arguments[$_i];}
+
+    var action = args[0];
+    var params = (args[1] instanceof Object)?args[1]:null;
+    var cb = (typeof args[1] === "function")?args[1]:args[2];
 
     switch(action){
 

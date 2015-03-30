@@ -16,13 +16,7 @@ Modules.prototype.LoadModules = function(cb){
 
     this.loaded_modules = _.extend(local_loaded_modules, loaded_engine_modules);
 
-    for(var key in this.loaded_modules)
-    {
-        delete this.loaded_modules[key][lizard.get('models dir')];
-    }
-
     if(cb) cb();
-    //console.log(require('util').inspect(this.loaded_modules));
 };
 
 Modules.prototype.GelModulesForControll = function(){
@@ -89,15 +83,23 @@ Modules.prototype.Info = function(_module)
 Modules.prototype.Model = function(module_name, model){
 
     if(model == undefined) return null;
-    model = model.toLowerCase();
+    var _module = this.Module(module_name);
 
-    if(_.has(lizard.models, model))
+    if(_module != null && _.has(_module, lizard.get('models dir')))
     {
-        var controller = lizard.models[model];
+        if(!_.has(_module, 'model_instance'))
+            _module['model_instance'] = {};
+
+        if(_.has(_module['model_instance'], model)){
+            return _module['model_instance'][model];
+        }
+
+        var controller = lizard.Utils.GetByPath(model, _module[lizard.get('models dir')]);
 
         if(controller != null)
         {
-            return controller;
+            _module['model_instance'][model] = new controller();
+            return _module['model_instance'][model];
         }
     }
 
@@ -113,7 +115,7 @@ Modules.prototype.Component = function(module_name, component){
 
     if(_module != null && _.has(_module, lizard.get('component dir')))
     {
-        var controller = this.GetByPath(component, _module[lizard.get('component dir')]);
+        var controller = lizard.Utils.GetByPath(component, _module[lizard.get('component dir')]);
 
         if(controller != null)
         {
@@ -134,30 +136,11 @@ Modules.prototype.Controller = function(module_name, controller){
 
     if(_module != null && _.has(_module, lizard.get('controllers dir')))
     {
-        var controller = this.GetByPath(controller, _module[lizard.get('controllers dir')]);
+        var controller = lizard.Utils.GetByPath(controller, _module[lizard.get('controllers dir')]);
 
         if(controller != null)
         {
             return controller;
-        }
-    }
-
-    return null;
-};
-
-Modules.prototype.GetByPath = function(path, find){
-
-    var explode = path.split(".");
-
-    for(var i = 0; i < explode.length; i++)
-    {
-        if(_.has(find, explode[i]) && typeof find[explode[i]] === "function")
-        {
-            return find[explode[i]];
-        } else if(_.has(find, explode[i]) && find[explode[i]] instanceof Object) {
-            find = find[explode[i]];
-        } else {
-            return null;
         }
     }
 

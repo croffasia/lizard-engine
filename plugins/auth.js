@@ -8,9 +8,7 @@ var lizard = require('lizard-engine'),
 
 module.exports.save = function(req, user)
 {
-    //console.log("SAVE = "+crypt.SHA224(user._id+"|"+user.email+"|"+lizard.get('cookies secret')));
     var auth = {};
-    //auth.hash = crypt.MD5(user._id+"|"+user.email+"|"+lizard.get('cookies secret'));
     auth.user = {};
     auth.user.name = user.name;
     auth.user.email = user.email;
@@ -18,14 +16,10 @@ module.exports.save = function(req, user)
 
     req.session.auth = auth;
     req.session.auth.hash = crypt.SHA224(user._id+"|"+user.email+"|"+lizard.get('cookies secret'));
-
-    //__INSPECT(req.session, "save: ");
 };
 
 module.exports.check = function(req, res)
 {
-    //__INSPECT(req.session, "check: ");
-
     if(_.has(req.session, 'auth') && _.has(req.session.auth, 'user'))
     {
         //SHA224

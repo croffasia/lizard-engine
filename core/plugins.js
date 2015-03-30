@@ -15,13 +15,11 @@ Plugins.prototype.LoadPlugins = function(){
     var systemPlugins = lizard.import( "node_modules"+path.sep+"lizard-engine"+path.sep+""+lizard.get('plugins dir'));
 
     this.loaded_plugins = _.extend(localPlugins, systemPlugins);
-
-    //console.log(require('util').inspect(this.loaded_plugins));
 };
 
 Plugins.prototype.Get = function(plugin)
 {
-    var controller = this.GetByPath(plugin, this.loaded_plugins);
+    var controller = lizard.Utils.GetByPath(plugin, this.loaded_plugins);
 
     if(controller != null)
     {
@@ -33,34 +31,17 @@ Plugins.prototype.Get = function(plugin)
 
 Plugins.prototype.Run = function(context, plugin)
 {
-    var controller = this.GetByPath(plugin, this.loaded_plugins);
+    var $_len = arguments.length;var args = new Array($_len); for(var $_i = 0; $_i < $_len; ++$_i) {args[$_i] = arguments[$_i];}
+
+    var controller = lizard.Utils.GetByPath(plugin, this.loaded_plugins);
 
     if(controller != null)
     {
-        var pluginArguments = Array.prototype.slice.call(arguments, 2);
+        var pluginArguments = Array.prototype.slice.call(args, 2);
         return controller.apply(context, pluginArguments);
     } else {
         return false;
     }
-};
-
-Plugins.prototype.GetByPath = function(path, find){
-
-    var explode = path.split(".");
-
-    for(var i = 0; i < explode.length; i++)
-    {
-        if(_.has(find, explode[i]) && typeof find[explode[i]] === "function")
-        {
-            return find[explode[i]];
-        } else if(_.has(find, explode[i]) && find[explode[i]] instanceof Object) {
-            find = find[explode[i]];
-        } else {
-            return null;
-        }
-    }
-
-    return null;
 };
 
 module.exports = new Plugins();
