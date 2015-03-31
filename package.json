@@ -1,6 +1,6 @@
 {
   "name": "lizard-engine",
-  "version": "0.1.2",
+  "version": "0.1.3",
 
   "description": "NodeJS Web Application Framework / built on Express.js and MongoDB",
 
@@ -8,14 +8,22 @@
 
   "repository": {
     "type": "git",
-    "url": "https://github.com/PoluosmakAndrew/lizard-engine.git"
+    "url": "git://github.com/PoluosmakAndrew/lizard-engine.git"
   },
+
+  "homepage": "https://github.com/PoluosmakAndrew/lizard-engine",
 
   "scripts": {
     "test": "mocha"
   },
 
-  "author": "Andrew Poluosmak",
+  "author": {
+    "name": "Andrew Poluosmak",
+    "email": "poluosmak.a@gmail.com"
+  },
+
+  "keywords": ["framework", "lizard", "lizard-engine", "web", "express", "router", "app", "modules", "api", "component", "plugins"],
+
   "license": "MIT",
 
   "dependencies": {
