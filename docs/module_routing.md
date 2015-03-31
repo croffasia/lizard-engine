@@ -39,3 +39,15 @@
 Где app - это название модуля, которому принадлежит контроллер, все остальные парамеры - путь к контроллеру без указание папки controllers.
 К примеру если вы хотите указать заглавной страницей контроллер **MyModule -> controllers -> frontend -> create.js**, то следует указывать
  **MyModule.frontend.create**
+
+## Документация
+
+* [Быстрый старт](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/getstarted.md)
+* [Архитектура приложения](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/architecture.md)
+* **Структура Модуля:**
+ * **роутинг**
+ * [контроллеры](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_controller.md)
+ * [компоненты](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_component.md)
+ * [модель](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_model.md)
+ * [шаблоны](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_template.md)
+* [Плагины](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/plugins.md)
