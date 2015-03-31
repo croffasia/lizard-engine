@@ -20,7 +20,7 @@ $   npm install -g generator-lizard-engine
 $   yo lizard-engine
 ```
 
-следуйте инструкциям в консоли.
+следуйте инструкциям.
 
 ### Готово
 
