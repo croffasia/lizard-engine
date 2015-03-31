@@ -42,9 +42,9 @@ var LizardEngine = function()
 		'modules dir': 'modules',
 		'template dir': 'views',
 
-        'mongodb host': '',
+        'mongodb host': 'localhost',
         'mongodb db': '',
-        'mongodb port': '',
+        'mongodb port': 27017,
         'mongodb user': '',
         'mongodb password': '',
 

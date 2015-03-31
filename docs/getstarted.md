@@ -1,6 +1,6 @@
 ## Быстрое создание приложения на базе LizardEngine
 
-Для быстрого создания базового приложения воспользуйтесь [генератором](https://github.com/PoluosmakAndrew/generator-lizard-engine) на базе Yeoman(http://yeoman.io/)
+Для быстрого создания базового приложения воспользуйтесь [генератором](https://github.com/PoluosmakAndrew/generator-lizard-engine) на базе [Yeoman](http://yeoman.io/)
 
 ### Требования
 
