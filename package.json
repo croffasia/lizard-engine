@@ -1,13 +1,23 @@
 {
   "name": "lizard-engine",
-  "version": "0.1.0",
-  "description": "NodeJS Web Application Platform",
+  "version": "0.1.2",
+
+  "description": "NodeJS Web Application Framework / built on Express.js and MongoDB",
+
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PoluosmakAndrew/lizard-engine.git"
   },
-  "author": "",
-  "license": "ISC",
+
+  "scripts": {
+    "test": "mocha"
+  },
+
+  "author": "Andrew Poluosmak",
+  "license": "MIT",
+
   "dependencies": {
     "async": "^0.9.0",
     "body-parser": "^1.12.0",
@@ -24,15 +34,20 @@
     "underscore": "^1.8.2",
     "validator": "^3.36.0"
   },
-  "gitHead": "bba7728231a04653e476324ecd72be74dd004293",
-  "readme": "# lizard-engine\nNodeJS Web Application Platform\n\n",
-  "readmeFilename": "README.md",
-  "_id": "lizard-engine@0.0.1",
-  "_shasum": "96b78c0e5cfce3cd597ab41ed11dcf499483d698",
-  "_from": "../../../../tmp/npm-70361-3c4f4be2/git-cache-5bfbbfcc0a70/d02ac97512c3fd0dc10020ea8d01291781c03066",
-  "_resolved": "git+https://git@github.com/PoluosmakAndrew/lizard-engine.git#d02ac97512c3fd0dc10020ea8d01291781c03066",
+
   "devDependencies": {
     "mocha": "^2.2.1",
     "should": "^5.2.0"
+  },
+
+  "readmeFilename": "README.md",
+
+  "bugs": {
+    "url": "https://github.com/PoluosmakAndrew/lizard-engine/issues"
+  },
+
+  "engines": {
+    "node": ">= 0.10.28",
+    "npm": ">= 1.4.9"
   }
 }

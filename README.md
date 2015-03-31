@@ -1,34 +1,28 @@
-# Lizard Engine
+## Lizard Engine
 
 Модульный NodeJS Framework для создания web-приложений построенный на [expressjs](http://expressjs.com/) и [MongoDB](https://www.mongodb.org/).
 
-# Возможности
+## Возможности
 
     * Модульная MVC архитектура
-        * настройки роутинга в Json формате
-        * контроллер
-        * модель
-        * компоненты
-        * шаблоны
-        * public директории
     * Плагины
     * Шаблонизатор Mozilla Nunjucks
     * Возможность встраивать плагины и компоненты как на программном уровне, так и тегов в шаблоне или контенте
     * Генератор приложения, модулей, контроллеров, моделей, плагинов, компонентов
 
-# Документация
+## Документация
 
-    * [Быстрый старт](/wiki/Быстрый старт)
-    * [Архитектура приложения](/wiki/Архитектура приложения)
-    * Модули
-        * [Роутинг](/wiki/Роутинг)
-        * [Контроллеры](/wiki/Контроллеры)
-        * [Компоненты](/wiki/Компоненты)
-        * [Модель](/wiki/Модель)
-        * [Шаблоны](/wiki/Шаблоны)
-    * [Плагины](/wiki/Плагины)
+* [Быстрый старт](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/getstarted.md)
+* [Архитектура приложения](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/architecture.md)
+* **Структура Модуля:**
+    * [роутинг](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_routing.md)
+    * [контроллеры](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_controller.md)
+    * [компоненты](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_component.md)
+    * [модель](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_model.md)
+    * [шаблоны](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_template.md)
+* [Плагины](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/plugins.md)
 
-# Лицензия
+## Лицензия
 
 Copyright (c) 2015 Poluosmak Andrew
 

@@ -102,22 +102,24 @@ LizardEngine.prototype.import = function(dirname){
 
         var imported = {};
 
-        fs.readdirSync(fromPath).forEach(function(name) {
+        try {
+            fs.readdirSync(fromPath).forEach(function (name) {
 
-            var fsPath = path.join(fromPath, name),
-                info = fs.statSync(fsPath);
+                var fsPath = path.join(fromPath, name),
+                    info = fs.statSync(fsPath);
 
-            if (info.isDirectory()) {
-                imported[name] = doImport(fsPath);
-            } else {
-                var ext  = path.extname(name);
-                var base = path.basename(name, ext);
-                if (require.extensions[ext]) {
-                    imported[base] = require(fsPath);
+                if (info.isDirectory()) {
+                    imported[name] = doImport(fsPath);
+                } else {
+                    var ext = path.extname(name);
+                    var base = path.basename(name, ext);
+                    if (require.extensions[ext]) {
+                        imported[base] = require(fsPath);
+                    }
                 }
-            }
 
-        });
+            });
+        } catch(e){};
 
         return imported;
     };
@@ -136,24 +138,26 @@ LizardEngine.prototype.importLocal = function(dirname){
 
         var imported = {};
 
-        fs.readdirSync(fromPath).forEach(function(name) {
+        try {
+            fs.readdirSync(fromPath).forEach(function(name) {
 
-            var fsPath = path.join(fromPath, name),
-                info = fs.statSync(fsPath);
+                var fsPath = path.join(fromPath, name),
+                    info = fs.statSync(fsPath);
 
-            // recur
-            if (info.isDirectory()) {
-                imported[name] = doImport(fsPath);
-            } else {
-                // only import files that we can `require`
-                var ext  = path.extname(name);
-                var base = path.basename(name, ext);
-                if (require.extensions[ext]) {
-                    imported[base] = require(fsPath);
+                // recur
+                if (info.isDirectory()) {
+                    imported[name] = doImport(fsPath);
+                } else {
+                    // only import files that we can `require`
+                    var ext  = path.extname(name);
+                    var base = path.basename(name, ext);
+                    if (require.extensions[ext]) {
+                        imported[base] = require(fsPath);
+                    }
                 }
-            }
 
-        });
+            });
+        } catch(e){};
 
         return imported;
     };
