@@ -26,7 +26,8 @@
     "modules",
     "api",
     "component",
-    "plugins"
+    "plugins",
+    "mongodb"
   ],
   "license": "MIT",
   "dependencies": {
