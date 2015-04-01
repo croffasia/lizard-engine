@@ -1,29 +1,35 @@
 /**
  * Created by andriipoluosmak on 25.02.15.
  */
-var lizard = require('lizard-engine'),
+var lizard       = require('lizard-engine'),
     cookieParser = require('cookie-parser'),
     bodyParser   = require('body-parser'),
-    session = require('express-session'),
-    compression = require('compression');
-    //moment = require('moment');
+    session      = require('express-session'),
+    compression  = require('compression');
 
-var Application = function(){};
+var Application  = function(){};
+var express      = require('express');
 
-var express = require('express');
+/**
+ * Инициализация сервера
+ * @param nextStep
+ * @param configureCallback
+ */
 
-Application.prototype.init = function(configureCallback){
-    this.app = express();
+Application.prototype.init = function(nextStep)
+{
+    this.app    = express();
     this.server = null;
 
-    if (process.env.NODE_ENV == "dev")
+    if (process.env.NODE_ENV === "dev")
         this.app.use(logger('dev'));
 
     this.app.use(express.static(lizard.get('project dir') + '/'+lizard.get('static dir')));
-    this.app.use('/public/cp', express.static(lizard.get('engine dir') + '/'+lizard.get('static dir')));
 
     //this.app.set('trust proxy', 1);
     this.app.use(cookieParser());
+    this.app.use(bodyParser.json());
+    this.app.use(bodyParser.urlencoded({ extended: false }));
 
     this.app.use(session({
         secret: lizard.get('cookies secret'),
@@ -32,16 +38,10 @@ Application.prototype.init = function(configureCallback){
     }));
 
     this.app.use(require('connect-flash')());
-
     this.app.use(compression());
 
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: false }));
-
     this.app.use(function (req, res, next) {
-        var mem = process.memoryUsage();
-        var mem_info = (mem.heapUsed / 1048576).toFixed(3) + " / " +(mem.heapTotal / 1048576).toFixed(3) + " MB";
-        console.log(mem_info+" :: ", req.url);
+        console.log(req.url);
         next();
     });
 
@@ -53,37 +53,71 @@ Application.prototype.init = function(configureCallback){
         });
     });
 
-    if(typeof configureCallback === "function")
+    if(lizard.get('application configure') != "" && typeof lizard.get('application configure') === "function")
     {
-        configureCallback(this);
+        lizard.get('application configure')(this.app, nextStep);
+    } else {
+        nextStep();
     }
 };
 
+/**
+ * Установка кастомных паблик директорий
+ * @param dir
+ * @param url
+ */
+Application.prototype.setPublic = function(dir, url){
+
+    if(url != undefined && url != "")
+        this.app.use(url, express.static(dir));
+    else
+        this.app.use(express.static(dir));
+};
+
+/**
+ * Старт сервера
+ */
 Application.prototype.start = function()
 {
     this.app.use(function(req, res, next){
         res.status(404);
 
-        // respond with html page
-        if (req.accepts('html')) {
-            //res.render('404', { url: req.url });
+        if (req.accepts('html'))
+        {
             var view = new lizard.View(req, res);
             view.locals.url = req.url;
             view.render('404.html');
             return;
         }
 
-        // respond with json
         if (req.accepts('json')) {
             res.send({ error: 'Not found' });
             return;
         }
 
-        // default to plain-text. send()
         res.type('txt').send('Not found');
     });
 
-    this.server = this.app.listen(process.env.PORT || lizard.get('port'), function(){
+    this.app.use(function(error, req, res, next){
+        res.status(500);
+
+        if (req.accepts('html'))
+        {
+            var view = new lizard.View(req, res);
+            view.locals.url = req.url;
+            view.render('500.html');
+            return;
+        }
+
+        if (req.accepts('json')) {
+            res.send({ error: 'Internal Server Error' });
+            return;
+        }
+
+        res.type('txt').send('Internal Server Error');
+    });
+
+    this.server = this.app.listen(lizard.get('port'), function(){
         console.log('Lizard Web Application listening at 127.0.0.1:%s', lizard.get('port'))
     });
 }

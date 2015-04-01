@@ -3,7 +3,7 @@
  */
 
 var lizard = require('lizard-engine'),
-    _ = require('underscore');
+    _ = require('lodash');
 
 var Modules = function(){
     this.loaded_modules = {};
@@ -12,7 +12,30 @@ var Modules = function(){
 Modules.prototype.LoadModules = function(cb){
 
     var loaded_engine_modules = lizard.importLocal(lizard.get('modules dir'), true);
+
+    if(loaded_engine_modules != null){
+        var dir = "";
+        for(var key in loaded_engine_modules){
+            if(_.has(loaded_engine_modules[key], lizard.get('static dir')))
+            {
+                dir = lizard.get('engine dir')+"/"+lizard.get('modules dir')+"/"+key+"/"+lizard.get('static dir');
+                lizard.Application.setPublic(dir, "/"+lizard.get('static dir')+'/'+key);
+            }
+        }
+    }
+
     var local_loaded_modules = lizard.import(lizard.get('modules dir'), true);
+
+    if(local_loaded_modules != null){
+        var dir = "";
+        for(var key in local_loaded_modules){
+            if(_.has(local_loaded_modules[key], lizard.get('static dir')))
+            {
+                dir = lizard.get('project dir')+"/"+lizard.get('modules dir')+"/"+key+"/"+lizard.get('static dir');
+                lizard.Application.setPublic(dir, "/"+lizard.get('static dir')+'/'+key);
+            }
+        }
+    }
 
     this.loaded_modules = _.extend(local_loaded_modules, loaded_engine_modules);
 

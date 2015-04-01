@@ -11,13 +11,29 @@ var lizard = require('lizard-engine'),
 
 var Database = function()
 {
-    var user = lizard.get('mongodb user');
-    var password = lizard.get('mongodb password');
 
-    var credentials = "";
-    if(user && password) credentials += user+":"+password+"@";
+};
 
-    this.mongodb_url = "mongodb://"+credentials+""+lizard.get('mongodb host')+":"+lizard.get('mongodb port')+"/"+lizard.get('mongodb db');
+/**
+ * Init Database Settings
+ */
+Database.prototype.init = function(){
+    var mongodb_connect_url = lizard.get('mongodb connect url');
+    var splited = mongodb_connect_url.split("/");
+
+    if(mongodb_connect_url !== "" && splited instanceof Array && splited.length > 3){
+        if(splited[3] === ""){
+            mongodb_connect_url += lizard.get('name');
+        }
+    } else if(mongodb_connect_url !== "" && splited instanceof Array && splited.length == 3){
+        mongodb_connect_url += "/"+lizard.get('name');
+    }
+
+    this.mongodb_url = mongodb_connect_url || process.env.MONGODB_DB_URL || process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || process.env.OPENSHIFT_MONGODB_DB_URL;
+
+    if(this.mongodb_url === undefined || this.mongodb_url === ""){
+        throw new lizard.Errors.DBError('MongoDB не сконфигурирована', 1);
+    }
 };
 
 /**

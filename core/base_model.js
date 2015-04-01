@@ -5,7 +5,7 @@
 var lizard = require('lizard-engine'),
     validator = require('validator'),
     inherits = require('util').inherits,
-    _ = require('underscore');
+    _ = require('lodash');
 
 var Model = function(){
 
@@ -22,8 +22,11 @@ Model.prototype.clear = function(cb){
 
     lizard.Database.collection(this.collection, function(err, col, md_cb){
 
-        if(err){
-            if(cb != undefined) cb(err);
+        if(err) {
+            if(cb !== undefined) {
+                cb(err);
+            }
+
             md_cb();
             return;
         }
@@ -33,11 +36,13 @@ Model.prototype.clear = function(cb){
 
             var res = {};
 
-            if(query_res != null && _.has(query_res, 'result')){
+            if(query_res !== null && query_res.hasOwnProperty('result')){
                 res = _.clone(query_res.result);
             }
 
-            if (cb != undefined) cb(query_err, res);
+            if (cb !== undefined) {
+                cb(query_err, res);
+            }
         });
     });
 };
@@ -51,8 +56,11 @@ Model.prototype.clear = function(cb){
 
 Model.prototype.insert = function(document, cb)
 {
-    if(document == undefined){
-        if(cb != undefined) cb({message: "Document is Empty"});
+    if(document === undefined){
+        if(cb !== undefined){
+            cb({message: "Document is Empty"});
+        }
+
         return;
     }
 
@@ -63,7 +71,10 @@ Model.prototype.insert = function(document, cb)
         lizard.Database.collection(this.collection, function(err, col, md_cb){
 
             if(err){
-                if(cb != undefined) cb(err);
+                if(cb !== undefined) {
+                    cb(err);
+                }
+
                 md_cb();
                 return;
             }
@@ -71,11 +82,21 @@ Model.prototype.insert = function(document, cb)
             col.insert(document, function(query_err, query_res){
                 md_cb();
 
-                if(cb != undefined) cb(query_err, query_res.result);
+                var res = {};
+
+                if(query_res !== null && query_res.hasOwnProperty('result')){
+                    res = _.clone(query_res.result);
+                }
+
+                if (cb !== undefined) {
+                    cb(query_err, res);
+                }
             });
         });
     } else {
-        if(cb != undefined) cb(validate);
+        if(cb !== undefined){
+            cb(validate);
+        }
     }
 };
 
@@ -88,8 +109,11 @@ Model.prototype.insert = function(document, cb)
  */
 Model.prototype.update = function(where, document, cb){
 
-    if(document == undefined){
-        if(cb != undefined) cb({message: "Document is Empty"});
+    if(document === undefined){
+        if(cb !== undefined){
+            cb({message: "Document is Empty"});
+        }
+
         return;
     }
 
@@ -101,7 +125,10 @@ Model.prototype.update = function(where, document, cb){
         lizard.Database.collection(this.collection, function(err, col, md_cb){
 
             if(err){
-                if(cb != undefined) cb(err);
+                if(cb !== undefined){
+                    cb(err);
+                }
+
                 md_cb();
                 return;
             }
@@ -109,11 +136,21 @@ Model.prototype.update = function(where, document, cb){
             col.update(where, { $set: document }, function(query_err, query_res){
                 md_cb();
 
-                if (cb != undefined) cb(query_err, query_res.result);
+                var res = {};
+
+                if(query_res !== null && query_res.hasOwnProperty('result')){
+                    res = _.clone(query_res.result);
+                }
+
+                if (cb !== undefined) {
+                    cb(query_err, res);
+                }
             });
         });
     } else {
-        if(cb != undefined) cb(validate);
+        if(cb !== undefined){
+            cb(validate);
+        }
     }
 };
 
@@ -129,8 +166,8 @@ Model.prototype.FormatDocument = function(document){
 
     var FormatColumn = function(column, value)
     {
-        if(column != null &&
-            _.has(column, 'format') &&
+        if(column !== null &&
+            column.hasOwnProperty('format') &&
             typeof column.format === "function"){
 
             return column.format.call(null, value);
@@ -141,20 +178,22 @@ Model.prototype.FormatDocument = function(document){
 
     var newDocument = null;
 
-    if(document != undefined && document != null)
+    if(document !== undefined && document !== null)
     {
-        if (this.columns != null && this.columns != undefined)
+        if (this.columns !== null && this.columns !== undefined)
         {
             newDocument = _.clone(document);
 
             for (var column in this.columns)
             {
-                newDocument[column] = FormatColumn(this.columns[column], newDocument[column]);
+                if(this.columns.hasOwnProperty(column) && newDocument.hasOwnProperty(column)){
+                    newDocument[column] = FormatColumn(this.columns[column], newDocument[column]);
+                }
             }
         }
     }
 
-    return (newDocument != null)?newDocument:document;
+    return (newDocument !== null)?newDocument:document;
 };
 
 /**
@@ -166,15 +205,21 @@ Model.prototype.FormatDocument = function(document){
 
 Model.prototype.remove = function(where, cb)
 {
-    if(where == undefined){
-        if(cb != undefined) cb({message: "Condition is Empty"});
+    if(where === undefined){
+        if(cb !== undefined){
+            cb({message: "Condition is Empty"});
+        }
+
         return;
     }
 
     lizard.Database.collection(this.collection, function(err, col, md_cb){
 
         if(err){
-            if(cb != undefined) cb(err);
+            if(cb !== undefined){
+                cb(err);
+            }
+
             md_cb();
             return;
         }
@@ -182,7 +227,15 @@ Model.prototype.remove = function(where, cb)
         col.remove(where, function (query_err, query_res) {
             md_cb();
 
-            if (cb != undefined) cb(query_err, query_res.result);
+            var res = {};
+
+            if(query_res !== null && query_res.hasOwnProperty('result')){
+                res = _.clone(query_res.result);
+            }
+
+            if (cb !== undefined) {
+                cb(query_err, res);
+            }
         });
     });
 };
@@ -192,14 +245,20 @@ Model.prototype.find = function(where, cb){
     lizard.Database.collection(this.collection, function(err, col, md_cb){
 
         if(err){
-            if(cb != undefined) cb(err);
+            if(cb !== undefined){
+                cb(err);
+            }
+
             md_cb();
             return;
         }
 
         col.find(where).toArray(function(query_err, query_res){
             md_cb();
-            if (cb != undefined) cb(query_err, query_res);
+
+            if (cb !== undefined){
+                cb(query_err, query_res);
+            }
         });
     });
 
@@ -212,14 +271,20 @@ Model.prototype.findOne = function(where, cb){
     lizard.Database.collection(this.collection, function(err, col, md_cb){
 
         if(err){
-            if(cb != undefined) cb(err);
+            if(cb !== undefined){
+                cb(err);
+            }
+
             md_cb();
             return;
         }
 
         col.findOne(where, function (query_err, query_res) {
             md_cb();
-            if (cb != undefined) cb(query_err, query_res);
+
+            if (cb !== undefined){
+                cb(query_err, query_res);
+            }
         });
     });
 };
@@ -231,8 +296,12 @@ Model.prototype.findOne = function(where, cb){
 Model.prototype.cursor = function(cb){
     lizard.Database.collection(this.collection, function(err, col, md_cb){
 
-        if(err != null){
-            if(cb != undefined) cb(err);
+        if(err !== null){
+
+            if(cb !== undefined){
+                cb(err);
+            }
+
             md_cb();
             return;
         }
@@ -246,9 +315,12 @@ Model.prototype.cursor = function(cb){
  * @param document
  */
 Model.prototype.validateDocumentFields = function(document){
-    for(var key in document){
-        if(!_.has(this.columns, key))
+
+    for(var key in document)
+    {
+        if(!this.columns.hasOwnProperty(key)){
             delete document[key];
+        }
     }
 
     return document;
@@ -264,13 +336,20 @@ Model.prototype.validateDocumentFields = function(document){
 
 Model.prototype.validate = function(document, isObjectResult)
 {
-    if(document != undefined && document != null){
+    if(document !== undefined && document !== null)
+    {
+        if (isObjectResult === undefined){
+            isObjectResult = true;
+        }
 
-        if (isObjectResult == undefined) isObjectResult = true;
+        var validate_result = { "failed": 0, "success": 0, "fields": {} };
 
-        var validate_result = { failed: 0, success: 0, fields: {} };
-
-        for (var key in document) validate_result[key] = true;
+        for (var key in document)
+        {
+            if(document.hasOwnProperty(key)){
+                validate_result.fields[key] = true;
+            }
+        }
 
         /**
          * Validator from library
@@ -281,10 +360,11 @@ Model.prototype.validate = function(document, isObjectResult)
 
             var args = [];
 
-            if(arguments.length > 1 && typeof arguments[1] === "string")
+            if(arguments.length > 1 && typeof arguments[1] === "string") {
                 args.push(document[arguments[1]]);
-            else
+            } else {
                 args = arguments[1];
+            }
 
             var validator_action = "",
                 validate_column_result = true;
@@ -316,29 +396,36 @@ Model.prototype.validate = function(document, isObjectResult)
 
             var args = [];
 
-            if(arguments.length > 1 && typeof arguments[1] === "string")
+            if(arguments.length > 1 && typeof arguments[1] === "string"){
                 args = [document[arguments[1]]];
-            else
+            } else {
                 args = arguments[1];
+            }
 
-            if(func == undefined || func == null) return false;
+            if(func === undefined || func === null){
+                return false;
+            }
 
             return func.apply(validator, args);
         };
 
         var UpdateValidateObject = function(column, result){
             validate_result.fields[column] = result;
-            if(result) validate_result.success++;
-            else validate_result.failed++;
+
+            if(result){
+                validate_result.success++;
+            } else {
+                validate_result.failed++;
+            }
         };
 
-        if( this.columns != null && this.columns != undefined)
+        if( this.columns !== null && this.columns !== undefined)
         {
             var validate_column_result = true;
 
             for (var column in this.columns)
             {
-                if (document.hasOwnProperty(column) && this.columns[column] != null
+                if (document.hasOwnProperty(column) && this.columns.hasOwnProperty(column)
                     && this.columns[column].hasOwnProperty("validate")) {
 
                     if (this.columns[column].validate instanceof Array)
@@ -352,10 +439,11 @@ Model.prototype.validate = function(document, isObjectResult)
                                 validate_column_result = CheckByString(this.columns[column].validate[i],
                                                                        column);
 
-                                if(isObjectResult)
+                                if(isObjectResult){
                                     UpdateValidateObject(column, validate_column_result);
-                                else if (!isObjectResult && !validate_column_result)
+                                } else if (!isObjectResult && !validate_column_result) {
                                     return false;
+                                }
 
                             // Validator with options
 
@@ -378,10 +466,11 @@ Model.prototype.validate = function(document, isObjectResult)
                                     validate_column_result = CheckByFunction(this.columns[column].validate[i].action,
                                                                              args);
 
-                                    if(isObjectResult)
+                                    if(isObjectResult){
                                         UpdateValidateObject(column, validate_column_result);
-                                    else if (!isObjectResult && !validate_column_result)
+                                    } else if (!isObjectResult && !validate_column_result) {
                                         return false;
+                                    }
 
                                 // Use default validator
 
@@ -390,10 +479,11 @@ Model.prototype.validate = function(document, isObjectResult)
                                     validate_column_result = CheckByString(this.columns[column].validate[i].action,
                                         args);
 
-                                    if(isObjectResult)
+                                    if(isObjectResult){
                                         UpdateValidateObject(column, validate_column_result);
-                                    else if (!isObjectResult && !validate_column_result)
+                                    } else if (!isObjectResult && !validate_column_result){
                                         return false;
+                                    }
                                 }
                             }
                         }
@@ -401,20 +491,22 @@ Model.prototype.validate = function(document, isObjectResult)
 
                         validate_column_result = CheckByFunction(this.columns[column].validate, column);
 
-                        if(isObjectResult)
+                        if(isObjectResult){
                             UpdateValidateObject(column, validate_column_result);
-                        else if (!isObjectResult && !validate_column_result)
+                        } else if (!isObjectResult && !validate_column_result){
                             return false;
+                        }
 
                     } else if(typeof this.columns[column].validate === "string") {
 
                         validate_column_result = CheckByString(this.columns[column].validate,
                                                                column);
 
-                        if(isObjectResult)
+                        if(isObjectResult){
                             UpdateValidateObject(column, validate_column_result);
-                        else if (!isObjectResult && !validate_column_result)
+                        } else if (!isObjectResult && !validate_column_result) {
                             return false;
+                        }
                     }
                 }
             }

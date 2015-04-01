@@ -4,7 +4,7 @@
 
 var lizard = require('lizard-engine'),
     crypt = require('crypto-js'),
-    _ = require('underscore');
+    _ = require('lodash');
 
 module.exports.save = function(req, user)
 {

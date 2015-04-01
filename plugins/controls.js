@@ -18,7 +18,7 @@ module.exports = function(module_selected, controller_selected)
                 {
                     for(var c = 0; c < modules_extend[i].cp.length; c++) {
 
-                        if (module_selected == modules_extend[i].cp[c].route)
+                        if (module_selected === modules_extend[i].cp[c].route)
                         {
                             result.module = modules_extend[i].cp[c];
                             result.name = modules_extend[i].id;

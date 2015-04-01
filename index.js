@@ -4,8 +4,7 @@
 
 var utils = require('util'),
     path = require('path'),
-    fs = require('fs'),
-    _ = require('underscore');
+    fs = require('fs');
 
 var BaseEngineOptions = require('./core/options');
 
@@ -29,12 +28,16 @@ var engineRoot = (function(_rootPath) {
 
 var LizardEngine = function()
 {
+    this.EVENT_COMPLETE_CONFIGURE = "completeConfigure";
+
 	this._options = {
-		'name': 'LizardApplication',
+
+        'name': 'LizardApplication',
 		'version': '0.0.1',
 
-        'static dir': 'public',
         'cookies secret': 'xk3it95I4Z0NQerdVTD12TrT3naANxewTK16zaRSKtg7e4JjCtJoyB0BgiV1RD',
+
+        'static dir': 'public',
         'controllers dir': 'controllers',
         'component dir': 'components',
         'plugins dir': 'plugins',
@@ -42,23 +45,17 @@ var LizardEngine = function()
 		'modules dir': 'modules',
 		'template dir': 'views',
 
-        'mongodb host': 'localhost',
-        'mongodb db': '',
-        'mongodb port': 27017,
-        'mongodb user': '',
-        'mongodb password': '',
+        'mongodb connect url': 'mongodb://localhost',
 
         'main controller': '',
-        'user model': 'user.model',
+        'application configure': '',
 		
 		'template engine': 'nunjucks',
         'project dir': moduleRoot,
         'engine dir': engineRoot,
 
-        'port': 3000
+        'port': process.env.PORT || 4181
 	};
-
-    this.Errors = {};
 };
 
 utils.inherits(LizardEngine, BaseEngineOptions);
@@ -82,13 +79,19 @@ lizard.Utils       = require('./lib/utils');
 LizardEngine.prototype.init = function(config){
 
     this.parseOptions(config);
-    lizard.Application.init();
-
     this.Errors = this.importLocal('lib/errors');
+    this.Database.init();
 
-    lizard.Modules.LoadModules();
-    lizard.Plugins.LoadPlugins();
-    lizard.Routing.initialize();
+    var context = this;
+
+    lizard.Application.init(function(){
+
+        lizard.Modules.LoadModules();
+        lizard.Plugins.LoadPlugins();
+        lizard.Routing.initialize();
+
+        context.emit(context.EVENT_COMPLETE_CONFIGURE);
+    });
 };
 
 /**

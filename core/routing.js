@@ -3,7 +3,7 @@
  */
 
 var lizard = require('lizard-engine');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var Routing = function(){
     this.routes_map = {};
@@ -27,11 +27,6 @@ Routing.prototype.Mapping = function(){
 
     context.ApplyMapping("/", lizard.get('main controller'));
 
-    //lizard.express.app.all('/', lizard.Modules.Module('cp').controllers.login);
-    //lizard.express.app.all('/cp/login', lizard.Modules.Module('cp').controllers.login);
-    //lizard.express.app.all('/cp/*', lizard.Modules.Module('cp').controllers.index);
-    //lizard.express.app.all('/cp', lizard.Modules.Module('cp').controllers.index);
-
     if(modules != null)
     {
         var system_auto_map = {};
@@ -39,19 +34,20 @@ Routing.prototype.Mapping = function(){
         for(var key in modules)
         {
             // Generate Routing Mapping from routing.json
-
-            if(_.has(modules[key], 'routing'))
+            if(modules[key].hasOwnProperty('routing'))
             {
                 var modules_map = {};
 
                 for(var map_key in modules[key]['routing'])
                 {
-                    modules_map[map_key] = key+"."+modules[key]['routing'][map_key];
-
-                    context.ApplyMapping(map_key, key+"."+modules[key]['routing'][map_key]);
+                    if(modules[key]['routing'].hasOwnProperty(map_key))
+                    {
+                        modules_map[map_key] = key+"."+modules[key]['routing'][map_key];
+                        context.ApplyMapping(map_key, key+"."+modules[key]['routing'][map_key]);
+                    }
                 }
 
-                this.routes_map = _.extend(this.routes_map, modules_map);
+                this.routes_map = _.merge(this.routes_map, modules_map);
             }
         }
     }
@@ -67,37 +63,21 @@ Routing.prototype.ApplyMapping = function(rules, action) {
         actionExplode.shift();
 
         var controllerPath = actionExplode.join(".");
-        var controller = lizard.Modules.Controller(moduleName, controllerPath);
+        var controller     = lizard.Modules.Controller(moduleName, controllerPath);
 
-        if(controller != null)
+        if(controller !== null)
         {
             lizard.Application.app.all(rules, controller);
         }
     }
 }
 
-Routing.prototype.GetControllerByPath = function(path, find){
-
-    var explode = path.split(".");
-
-    for(var i = 0; i < explode.length; i++)
-    {
-        if(_.has(find, explode[i]) && typeof find[explode[i]] === "function")
-        {
-            return find[explode[i]];
-        } else if(_.has(find, explode[i]) && find[explode[i]] instanceof Object) {
-            find = find[explode[i]];
-        } else {
-            return null;
-        }
-    }
-
-    return null;
-};
-
 function module_exists( name ) {
-    try { return require.resolve( name ) }
-    catch( e ) { return false }
+    try {
+        return require.resolve( name )
+    } catch( e ) {
+        return false
+    };
 }
 
 module.exports = new Routing();

@@ -6,21 +6,22 @@ var lizard = require('lizard-engine'),
     async = require('async'),
     path = require('path'),
     validator = require('validator'),
-    _ = require('underscore');
+    _ = require('lodash');
 
 var View = function(_req, _res, _module){
     this.locals = {};
-    this.res = _res;
-    this.req = _req;
+    this.res    = _res;
+    this.req    = _req;
     this.module = _module;
 
-    this.queueInit = [];
+    this.queueInit   = [];
     this.queueAction = [];
 
-    if(_module != undefined && _module != "")
+    if(_module !== undefined && _module !== ""){
         this.sub_templates_dir = GetRootDirFromID(this.module.replace(lizard.get('project dir'), ""));
-    else
+    } else {
         this.sub_templates_dir = "";
+    }
 
     this.template_engine = require("../lib/templates/"+lizard.get('template engine'));
     this.template_engine.init(lizard.get('project dir'));
@@ -32,7 +33,7 @@ View.prototype.on = function()
 
     var action = args[0];
     var params = (args[1] instanceof Object)?args[1]:null;
-    var cb = (typeof args[1] === "function")?args[1]:args[2];
+    var cb     = (typeof args[1] === "function")?args[1]:args[2];
 
     switch(action){
 
@@ -52,47 +53,51 @@ View.prototype.on = function()
     }
 };
 
-function GetActionQuery(context){
+function GetActionQuery(context)
+{
     var newQuery = [];
 
-    if(context.queueAction && context.queueAction.length > 0)
+    if(context.queueAction !== null && context.queueAction.length > 0)
     {
         for(var i = 0; i < context.queueAction.length; i++)
         {
-            if(context.queueAction[i].params != null)
+            if(context.queueAction[i].hasOwnProperty('params') && context.queueAction[i].params !== null)
             {
                 var isAccess = true;
 
                 for(var key in context.queueAction[i].params)
                 {
-                    switch(context.queueAction[i].action)
+                    if(context.queueAction[i].hasOwnProperty('action'))
                     {
-                        case "get":
+                        switch(context.queueAction[i].action)
+                        {
+                            case "get":
 
-                            if(context.req.query[key] == undefined
-                                || context.req.query[key] !=  context.queueAction[i].params[key]){
-                                isAccess = false;
-                            }
+                                if(!context.req.query.hasOwnProperty(key)
+                                    || context.req.query[key] !==  context.queueAction[i].params[key]){
+                                    isAccess = false;
+                                }
 
-                            break;
+                                break;
 
-                        case "params":
+                            case "params":
 
-                            if(context.req.params[key] == undefined
-                                || context.req.params[key] !=  context.queueAction[i].params[key]){
-                                isAccess = false;
-                            }
+                                if(!context.req.params.hasOwnProperty(key)
+                                    || context.req.params[key] !==  context.queueAction[i].params[key]){
+                                    isAccess = false;
+                                }
 
-                            break;
+                                break;
 
-                        case "post":
+                            case "post":
 
-                            if(context.req.body[key] == undefined
-                                || context.req.body[key] !=  context.queueAction[i].params[key]){
-                                isAccess = false;
-                            }
+                                if(!context.req.body.hasOwnProperty(key)
+                                    || context.req.body[key] !==  context.queueAction[i].params[key]){
+                                    isAccess = false;
+                                }
 
-                            break;
+                                break;
+                        }
                     }
 
                     if(!isAccess) break;
@@ -118,7 +123,7 @@ function GetModuleFromID(id)
 
         while(i > 1)
         {
-            if(dir[i - 1] == modulesDirName)
+            if(dir[i - 1] === modulesDirName)
             {
                 return dir[i];
             }
@@ -141,7 +146,7 @@ function GetRootDirFromID(id)
 
         while(i < dir.length)
         {
-            if(dir[i] == modulesDirName)
+            if(dir[i] === modulesDirName)
             {
                 return path_to_root.join('/');
             } else {
@@ -157,17 +162,17 @@ function GetRootDirFromID(id)
 
 View.prototype.render = function(template, cb){
 
-    var module = (this.module != undefined)?GetModuleFromID(this.module):"";
-    var context = this;
+    var module   = (this.module !== undefined) ? GetModuleFromID(this.module) : "";
+    var context  = this;
     var allQuery = this.queueInit.concat(GetActionQuery(this));
 
     async.series(allQuery, function(error, results)
     {
-        if(error == null)
+        if(error === null || error === undefined)
         {
-            var currentTemplate = context.sub_templates_dir+"/"+lizard.get('template dir')+"/"+template;
+            var currentTemplate = context.sub_templates_dir + "/" + lizard.get('template dir') + "/" + template;
 
-            if(module != "")
+            if(module !== "")
             {
                 context.locals.module_template_dir = context.sub_templates_dir+"/"+lizard.get('modules dir')+"/"+module+"/"+lizard.get('template dir');
                 currentTemplate = context.locals.module_template_dir + "/"+template;
@@ -175,13 +180,13 @@ View.prototype.render = function(template, cb){
 
             context.locals.template_dir = context.sub_templates_dir+"/"+lizard.get('template dir');
 
-            var variables = _.extend(context.locals, context.res.locals);
+            var variables = _.merge(context.locals, context.res.locals);
 
             context.template_engine.render(currentTemplate, variables, function(render_error, render_content){
 
                 context.ExtendComponents(render_content, function(runableContent)
                 {
-                    if(cb != undefined && typeof cb === "function")
+                    if(cb !== undefined && typeof cb === "function")
                     {
                         cb(runableContent);
                     } else {
@@ -192,14 +197,20 @@ View.prototype.render = function(template, cb){
                 });
             });
 
-        } else { if(cb == undefined) throw  Error("Error render"); else cb(""); }
+        } else {
+            if(cb === undefined){
+                throw  Error("Error render");
+            } else {
+                cb("");
+            }
+        }
     });
 };
 
 View.prototype.ExtendComponents = function(content, cb){
 
-    var re = /\[\[(.*?)\]\]/g;
-    var results = [];
+    var re              = /\[\[(.*?)\]\]/g;
+    var results         = [];
     var replacedContent = content;
 
     while( res = re.exec(content) ) {
@@ -213,19 +224,20 @@ View.prototype.ExtendComponents = function(content, cb){
         var series = [];
         for(var i = 0; i < results.length; i++)
         {
-            var exp = results[i].split("|");
-            var tag = validator.trim(exp[0]);
-            var options = {};
+            var exp          = results[i].split("|");
+            var tag          = validator.trim(exp[0]);
+            var options      = {};
             var tag_replaced = results[i];
 
-            if(exp.length > 1)
+            if(exp.length > 1){
                 options = JSON.parse(validator.trim(exp[1]));
+            }
 
             var execution = function(_tag, _tag_replaced, _options)
             {
-                var __tag = _tag;
+                var __tag          = _tag;
                 var __tag_replaced = _tag_replaced;
-                var __options = _options;
+                var __options      = _options;
 
                 return function(next){
                     lizard.Plugins.Run(context, 'component', __tag, context.req, context.res, __options, function(plugin_content){

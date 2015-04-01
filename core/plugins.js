@@ -3,7 +3,7 @@
  */
 
 var lizard = require('lizard-engine'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     path = require('path');
 
 var Plugins = function(){
@@ -11,17 +11,17 @@ var Plugins = function(){
 };
 
 Plugins.prototype.LoadPlugins = function(){
-    var localPlugins = lizard.import(lizard.get('plugins dir'), true);
+    var localPlugins  = lizard.import(lizard.get('plugins dir'), true);
     var systemPlugins = lizard.import( "node_modules"+path.sep+"lizard-engine"+path.sep+""+lizard.get('plugins dir'));
 
-    this.loaded_plugins = _.extend(localPlugins, systemPlugins);
+    this.loaded_plugins = _.merge(localPlugins, systemPlugins);
 };
 
 Plugins.prototype.Get = function(plugin)
 {
     var controller = lizard.Utils.GetByPath(plugin, this.loaded_plugins);
 
-    if(controller != null)
+    if(controller !== null)
     {
         return controller;
     }
@@ -35,10 +35,9 @@ Plugins.prototype.Run = function(context, plugin)
 
     var controller = lizard.Utils.GetByPath(plugin, this.loaded_plugins);
 
-    if(controller != null)
+    if(controller !== null)
     {
-        var pluginArguments = Array.prototype.slice.call(args, 2);
-        return controller.apply(context, pluginArguments);
+        return controller.apply(context, args.slice(2));
     } else {
         return false;
     }
