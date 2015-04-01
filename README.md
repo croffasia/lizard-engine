@@ -2,18 +2,19 @@
 
 Модульный NodeJS Framework для создания web-приложений построенный на [expressjs](http://expressjs.com/) и [MongoDB](https://www.mongodb.org/).
 
-## Возможности
+## Lizard Engine в деталях
 
+* Генератор приложения, модулей, контроллеров, моделей, плагинов, компонентов
 * Модульная MVC архитектура
 * Шаблонизатор Mozilla Nunjucks
 * Плагины и компоненты
 * Возможность встраивать плагины и компоненты как на программном уровне, так и тегов в шаблоне или контенте
-* Генератор приложения, модулей, контроллеров, моделей, плагинов, компонентов
 
 ## Документация
 
 * [Быстрый старт](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/getstarted.md)
 * [Архитектура приложения](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/architecture.md)
+* [Парамтеры настройка приложения](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/configuration.md)
 * **Структура Модуля:**
     * [роутинг](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_routing.md)
     * [контроллеры](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_controller.md)
