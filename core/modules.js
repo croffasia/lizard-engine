@@ -13,10 +13,15 @@ Modules.prototype.LoadModules = function(cb){
 
     var loaded_engine_modules = lizard.importLocal(lizard.get('modules dir'), true);
 
-    if(loaded_engine_modules != null){
+    if(loaded_engine_modules != null)
+    {
         var dir = "";
-        for(var key in loaded_engine_modules){
-            if(_.has(loaded_engine_modules[key], lizard.get('static dir')))
+
+        for(var key in loaded_engine_modules)
+        {
+            loaded_engine_modules[key].isSystem = true;
+
+            if(loaded_engine_modules.hasOwnProperty(key) && loaded_engine_modules[key].hasOwnProperty(lizard.get('static dir')))
             {
                 dir = lizard.get('engine dir')+"/"+lizard.get('modules dir')+"/"+key+"/"+lizard.get('static dir');
                 lizard.Application.setPublic(dir, "/"+lizard.get('static dir')+'/'+key);
@@ -26,7 +31,8 @@ Modules.prototype.LoadModules = function(cb){
 
     var local_loaded_modules = lizard.import(lizard.get('modules dir'), true);
 
-    if(local_loaded_modules != null){
+    if(local_loaded_modules != null)
+    {
         var dir = "";
         for(var key in local_loaded_modules){
             if(_.has(local_loaded_modules[key], lizard.get('static dir')))
@@ -39,7 +45,9 @@ Modules.prototype.LoadModules = function(cb){
 
     this.loaded_modules = _.extend(local_loaded_modules, loaded_engine_modules);
 
-    if(cb) cb();
+    if(cb){
+        cb();
+    }
 };
 
 Modules.prototype.GelModulesForControll = function(){

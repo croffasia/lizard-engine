@@ -3,18 +3,36 @@
  */
 
 var lizard = require('lizard-engine');
-var _ = require('lodash');
+var lodash = require('lodash');
 
-var Routing = function(){
-    this.routes_map = {};
-};
+var Routing = function(){};
 
 /**
  * Initialize routing map
  */
-Routing.prototype.initialize = function(){
-    this.routes_map["/"] = lizard.get('main controller');
+Routing.prototype.initialize = function()
+{
+    this.global_routing = lizard.importFile('routing.json');
     this.Mapping();
+
+    if(this.global_routing != null){
+        this.MappingGlobalRouting();
+    }
+};
+
+/**
+ * Mapping override routing
+ * @constructor
+ */
+Routing.prototype.MappingGlobalRouting = function(){
+
+    for(var key in this.global_routing)
+    {
+        if(this.global_routing.hasOwnProperty(key))
+        {
+            this.ApplyMapping(key, this.global_routing[key]);
+        }
+    }
 };
 
 /**
@@ -23,37 +41,57 @@ Routing.prototype.initialize = function(){
  */
 Routing.prototype.Mapping = function(){
     var modules = lizard.Modules.loaded_modules;
-    var context = this;
 
-    context.ApplyMapping("/", lizard.get('main controller'));
+    this.ApplyMapping("/", lizard.get('main controller'));
 
     if(modules != null)
     {
         var system_auto_map = {};
+        var isSystem = false;
 
         for(var key in modules)
         {
+            if(modules[key].hasOwnProperty('isSystem')){
+                isSystem = true;
+            } else {
+                isSystem = false;
+            }
+
+            // Skip for oweride global routing for project modules
+            if(this.global_routing != null && isSystem == false){
+                continue;
+            }
+
             // Generate Routing Mapping from routing.json
             if(modules[key].hasOwnProperty('routing'))
             {
-                var modules_map = {};
-
                 for(var map_key in modules[key]['routing'])
                 {
                     if(modules[key]['routing'].hasOwnProperty(map_key))
                     {
-                        modules_map[map_key] = key+"."+modules[key]['routing'][map_key];
-                        context.ApplyMapping(map_key, key+"."+modules[key]['routing'][map_key]);
+                        this.ApplyMapping(map_key, key+"."+modules[key]['routing'][map_key]);
                     }
                 }
-
-                this.routes_map = _.merge(this.routes_map, modules_map);
             }
         }
     }
 }
 
 Routing.prototype.ApplyMapping = function(rules, action) {
+
+    var routingType = 'get';
+    var validTypes = ['get', 'post', 'put', 'all', 'delete'];
+
+    if(action.indexOf(':'))
+    {
+        routingType = action.split(':')[0];
+
+        if(validTypes.indexOf(routingType) == -1){
+            routingType = "get";
+        } else {
+            action = action.split(':')[1];
+        }
+    }
 
     var actionExplode = action.split(".");
 
@@ -67,17 +105,9 @@ Routing.prototype.ApplyMapping = function(rules, action) {
 
         if(controller !== null)
         {
-            lizard.Application.app.all(rules, controller);
+            lizard.Application.app[routingType].call(lizard.Application.app, rules, controller);
         }
     }
-}
-
-function module_exists( name ) {
-    try {
-        return require.resolve( name )
-    } catch( e ) {
-        return false
-    };
 }
 
 module.exports = new Routing();

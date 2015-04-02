@@ -131,6 +131,23 @@ LizardEngine.prototype.import = function(dirname){
 };
 
 /**
+ * Import local file
+ * @param file
+ * @returns {*} module
+ */
+LizardEngine.prototype.importFile = function(file){
+
+    var module = null;
+    var filePath = path.join(moduleRoot, file);
+
+    if (fs.existsSync(filePath)) {
+        module = require(filePath);
+    }
+
+    return module;
+};
+
+/**
  * Import modules from engine directory
  * @param dirname
  */
