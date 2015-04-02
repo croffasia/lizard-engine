@@ -23,6 +23,7 @@
     * [модель](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_model.md)
     * [шаблоны](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/module_template.md)
 * [Плагины](https://github.com/PoluosmakAndrew/lizard-engine/blob/master/docs/plugins.md)
+    * [Каталог дополнений: плагины, модули](https://github.com/PoluosmakAndrew/lizard-engine/wiki/%D0%94%D0%BE%D0%BF%D0%BE%D0%BB%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5:-%D0%9F%D0%BB%D0%B0%D0%B3%D0%B8%D0%BD%D1%8B,-%D0%9C%D0%BE%D0%B4%D1%83%D0%BB%D0%B8,-%D0%9A%D0%BE%D0%BC%D0%BF%D0%BE%D0%BD%D0%B5%D0%BD%D1%82%D1%8B)
 
 ## Лицензия
 
