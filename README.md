@@ -1,8 +1,9 @@
 ![Lizard Engine](http://i.imgur.com/mhamGKF.png)
 ===================================
-[![Node Version][node-image][npm-url]]
-[![NPM Version][npm-image][npm-url]]
-[![NPM Downloads][downloads-image][downloads-url]]
+[![Node Version][node-image]][npm-url]
+[![NPM Version][npm-image]][npm-url]
+[![NPM Downloads][downloads-image]][downloads-url]
+[![License][license-image]][downloads-url]
 
 Модульный NodeJS Framework для создания web-приложений построенный на [expressjs](http://expressjs.com/) и [MongoDB](https://www.mongodb.org/).
 
@@ -41,5 +42,6 @@ Copyright (c) 2015 Poluosmak Andrew
 [node-image]: https://img.shields.io/node/v/lizard-engine.svg
 [npm-image]: https://img.shields.io/npm/v/lizard-engine.svg
 [npm-url]: https://npmjs.org/package/lizard-engine
+[license-image]: https://img.shields.io/npm/l/lizard-engine.svg
 [downloads-image]: https://img.shields.io/npm/dm/lizard-engine.svg
 [downloads-url]: https://npmjs.org/package/lizard-engine
