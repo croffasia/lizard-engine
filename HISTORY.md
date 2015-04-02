@@ -41,6 +41,7 @@ module.exports = function(expressApplication, next){
  next();
 
 };
+```
 
 Пример расширяющего плагина можно посмотреть [здесь lizard-engine-social-auth](https://github.com/PoluosmakAndrew/lizard-engine-social-auth)
 
