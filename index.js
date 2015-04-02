@@ -81,13 +81,13 @@ LizardEngine.prototype.init = function(config){
     this.parseOptions(config);
     this.Errors = this.importLocal('lib/errors');
     this.Database.init();
+    lizard.Plugins.LoadPlugins();
 
     var context = this;
 
     lizard.Application.init(function(){
 
         lizard.Modules.LoadModules();
-        lizard.Plugins.LoadPlugins();
         lizard.Routing.initialize();
 
         context.emit(context.EVENT_COMPLETE_CONFIGURE);

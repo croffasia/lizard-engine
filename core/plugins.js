@@ -11,8 +11,8 @@ var Plugins = function(){
 };
 
 Plugins.prototype.LoadPlugins = function(){
-    var localPlugins  = lizard.import(lizard.get('plugins dir'), true);
-    var systemPlugins = lizard.import( "node_modules"+path.sep+"lizard-engine"+path.sep+""+lizard.get('plugins dir'));
+    var localPlugins  = lizard.import(lizard.get('plugins dir'));
+    var systemPlugins = lizard.importLocal(lizard.get('plugins dir'));
 
     this.loaded_plugins = _.merge(localPlugins, systemPlugins);
 };

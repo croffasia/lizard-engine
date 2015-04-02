@@ -45,14 +45,6 @@ Application.prototype.init = function(nextStep)
         next();
     });
 
-    this.app.use(function (req, res, next) {
-
-        lizard.Plugins.Run(this, 'auth.get', req, function(result){
-            res.locals.user = result;
-            next();
-        });
-    });
-
     if(lizard.get('application configure') != "" && typeof lizard.get('application configure') === "function")
     {
         lizard.get('application configure')(this.app, nextStep);
@@ -98,7 +90,7 @@ Application.prototype.start = function()
         res.type('txt').send('Not found');
     });
 
-    this.app.use(function(error, req, res, next){
+    /*this.app.use(function(error, req, res, next){
         res.status(500);
 
         if (req.accepts('html'))
@@ -115,7 +107,7 @@ Application.prototype.start = function()
         }
 
         res.type('txt').send('Internal Server Error');
-    });
+    });*/
 
     this.server = this.app.listen(lizard.get('port'), function(){
         console.log('Lizard Web Application listening at 127.0.0.1:%s', lizard.get('port'))
