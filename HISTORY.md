@@ -25,7 +25,6 @@ lizard.on(lizard.EVENT_COMPLETE_CONFIGURE, function(){
 lizard.init({
  'name': 'YOUR_PROJECT_NAME'
  ,'main controller': 'YOU_CONTROLLER_NAME'
- ,'port': 80 // установлен 80 порт для доступа к сайту по адресу прописанному в host (понадобится для тестирования)
  ,'application configure': middleware // указываем middleware прослойку
 });
 ```
