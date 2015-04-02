@@ -1,5 +1,8 @@
 ![Lizard Engine](http://i.imgur.com/mhamGKF.png)
 ===================================
+[![Node Version][node-image][npm-url]]
+[![NPM Version][npm-image][npm-url]]
+[![NPM Downloads][downloads-image][downloads-url]]
 
 Модульный NodeJS Framework для создания web-приложений построенный на [expressjs](http://expressjs.com/) и [MongoDB](https://www.mongodb.org/).
 
@@ -34,3 +37,9 @@ Copyright (c) 2015 Poluosmak Andrew
 Указанное выше уведомление об авторском праве и данные условия должны быть включены во все копии или значимые части данного Программного Обеспечения.
 
 ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ ГАРАНТИИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И ОТСУТСТВИЯ НАРУШЕНИЙ, НО НЕ ОГРАНИЧИВАЯСЬ ИМИ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО КАКИМ-ЛИБО ИСКАМ, ЗА УЩЕРБ ИЛИ ПО ИНЫМ ТРЕБОВАНИЯМ, В ТОМ ЧИСЛЕ, ПРИ ДЕЙСТВИИ КОНТРАКТА, ДЕЛИКТЕ ИЛИ ИНОЙ СИТУАЦИИ, ВОЗНИКШИМ ИЗ-ЗА ИСПОЛЬЗОВАНИЯ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫХ ДЕЙСТВИЙ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.
+
+[node-image]: https://img.shields.io/node/v/lizard-engine.svg
+[npm-image]: https://img.shields.io/npm/v/lizard-engine.svg
+[npm-url]: https://npmjs.org/package/lizard-engine
+[downloads-image]: https://img.shields.io/npm/dm/lizard-engine.svg
+[downloads-url]: https://npmjs.org/package/lizard-engine
