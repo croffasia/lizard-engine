@@ -5,6 +5,8 @@
 [![NPM Downloads][downloads-image]][downloads-url]
 [![License][license-image]][downloads-url]
 
+[![NPM](https://nodei.co/npm/lizard-engine.png?downloads=true&downloadRank=true)](https://nodei.co/npm/lizard-engine/)
+
 Модульный NodeJS Framework для создания web-приложений построенный на [expressjs](http://expressjs.com/) и [MongoDB](https://www.mongodb.org/).
 
 ## Lizard Engine в деталях
