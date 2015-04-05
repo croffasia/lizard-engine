@@ -80,15 +80,18 @@ LizardEngine.prototype.init = function(config){
 
     this.parseOptions(config);
     this.Errors = this.importLocal('lib/errors');
+
     this.Database.init();
+
     lizard.Plugins.LoadPlugins();
+    lizard.Modules.LoadModules();
 
     var context = this;
 
     lizard.Application.init(function(){
 
-        lizard.Modules.LoadModules();
-        lizard.Routing.initialize();
+        context.Routing.initialize();
+        context.Modules.MappingPublic();
 
         context.emit(context.EVENT_COMPLETE_CONFIGURE);
     });
@@ -126,6 +129,7 @@ LizardEngine.prototype.import = function(dirname){
 
         return imported;
     };
+
 
     return doImport(initialPath);
 };

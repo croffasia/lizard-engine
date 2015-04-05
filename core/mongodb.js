@@ -2,7 +2,8 @@
  * Created by andriipoluosmak on 26.02.15.
  */
 var lizard = require('lizard-engine'),
-    connection = require('mongodb').MongoClient;
+    mongo = require('mongodb'),
+    connection = mongo.MongoClient;
 
 /**
  * MongoDB Database
@@ -11,6 +12,26 @@ var lizard = require('lizard-engine'),
 
 var Database = function()
 {
+    this.initTypes();
+
+    this.conn = null;
+};
+
+/**
+ * Database Field types
+ */
+Database.prototype.initTypes = function(){
+
+    this.Types = {};
+    this.Types.String  = "string";
+    this.Types.Number  = "number";
+    this.Types.Integer = "integer";
+    this.Types.Array   = "array";
+    this.Types.Boolean = "boolean";
+    this.Types.Object  = "object";
+    this.Types.Any     = "any";
+
+    this.ObjectID = mongo.ObjectID;
 
 };
 
@@ -34,6 +55,8 @@ Database.prototype.init = function(){
     if(this.mongodb_url === undefined || this.mongodb_url === ""){
         throw new lizard.Errors.DBError('MongoDB не сконфигурирована', 1);
     }
+
+    this.connect();
 };
 
 /**
@@ -42,32 +65,39 @@ Database.prototype.init = function(){
 Database.prototype.Model = require('./base_model');
 
 /**
- * Connect to Database and run query
- * @param collection_name Collection name
- * @param cb
+ * Connect to DB
  */
-Database.prototype.collection = function(collection_name, cb)
-{
-    connection.connect(this.mongodb_url, function(err, db)
+Database.prototype.connect = function(){
+    if(this.conn === null)
     {
-        if(err && cb != undefined)
-        {
-            db.close();
-            return cb(err);
-        }
+        var context = this;
+        connection.connect(this.mongodb_url, function(err, db){
 
-        var collection = db.collection(collection_name);
+            if(err == null){
+                context.conn = db;
+            } else {
+                context.conn = null;
+            }
+        });
+    }
+};
 
-        if(cb != undefined)
-        {
-            cb(err, collection, function()
-            {
-                db.close();
-            });
-        } else {
-            db.close();
-        }
-    });
+/**
+ * Return current connection
+ */
+
+Database.prototype.getConnection = function(){
+    return this.conn;
+};
+
+/**
+ * Disconnect
+ */
+Database.prototype.disconnect = function(){
+    if(this.conn !== null)
+    {
+        this.conn.close();
+    }
 };
 
 module.exports = new Database();

@@ -3,25 +3,36 @@
  */
 
 var lizard = require('lizard-engine'),
-    _ = require('lodash');
+    lodash = require('lodash');
 
 var Modules = function(){
     this.loaded_modules = {};
+    this.loaded_system_modules = {};
 };
 
-Modules.prototype.LoadModules = function(cb){
+Modules.prototype.LoadModules = function(){
 
-    var loaded_engine_modules = lizard.importLocal(lizard.get('modules dir'), true);
+    this.loaded_system_modules = lizard.importLocal(lizard.get('modules dir'), true);
+    this.loaded_modules        = lizard.import(lizard.get('modules dir'), true);
+};
 
-    if(loaded_engine_modules != null)
+/**
+ * Set static public directory for express.js
+ */
+
+Modules.prototype.MappingPublic = function(){
+
+    // System modules
+
+    if(this.loaded_system_modules != null)
     {
         var dir = "";
 
-        for(var key in loaded_engine_modules)
+        for(var key in this.loaded_system_modules)
         {
-            loaded_engine_modules[key].isSystem = true;
+            this.loaded_system_modules[key].isSystem = true;
 
-            if(loaded_engine_modules.hasOwnProperty(key) && loaded_engine_modules[key].hasOwnProperty(lizard.get('static dir')))
+            if(this.loaded_system_modules.hasOwnProperty(key) && this.loaded_system_modules[key].hasOwnProperty(lizard.get('static dir')))
             {
                 dir = lizard.get('engine dir')+"/"+lizard.get('modules dir')+"/"+key+"/"+lizard.get('static dir');
                 lizard.Application.setPublic(dir, "/"+lizard.get('static dir')+'/'+key);
@@ -29,13 +40,17 @@ Modules.prototype.LoadModules = function(cb){
         }
     }
 
-    var local_loaded_modules = lizard.import(lizard.get('modules dir'), true);
+    // Local project modules
 
-    if(local_loaded_modules != null)
+    if(this.loaded_modules != null)
     {
         var dir = "";
-        for(var key in local_loaded_modules){
-            if(_.has(local_loaded_modules[key], lizard.get('static dir')))
+
+        for(var key in this.loaded_modules)
+        {
+            this.loaded_modules[key].isSystem = false;
+
+            if(this.loaded_modules.hasOwnProperty(key) && this.loaded_modules[key].hasOwnProperty(lizard.get('static dir')))
             {
                 dir = lizard.get('project dir')+"/"+lizard.get('modules dir')+"/"+key+"/"+lizard.get('static dir');
                 lizard.Application.setPublic(dir, "/"+lizard.get('static dir')+'/'+key);
@@ -43,91 +58,65 @@ Modules.prototype.LoadModules = function(cb){
         }
     }
 
-    this.loaded_modules = _.extend(local_loaded_modules, loaded_engine_modules);
-
-    if(cb){
-        cb();
-    }
 };
 
-Modules.prototype.GelModulesForControll = function(){
-
-    var results = [];
-
-    if(this.loaded_modules != undefined)
-    {
-        for(var key in this.loaded_modules)
-        {
-            if (_.has(this.loaded_modules[key], 'info')
-                && _.has(this.loaded_modules[key]['info'], 'settings')
-                && _.has(this.loaded_modules[key]['info']['settings'], 'cp')
-                && this.loaded_modules[key]['info']['settings']['cp'] == true){
-
-                results.push(this.loaded_modules[key]['info']);
-            }
-        }
-    }
-
-    return results;
-};
-
-Modules.prototype.isControllPanel = function(module_name)
-{
-    var module = this.Module(module_name);
-
-    if(module != null &&
-        _.has(module, lizard.get('controllers dir'))
-        && _.has(module[lizard.get('controllers dir')], 'cp'))
-    {
-        return true;
-    }
-
-    return false;
-};
+/**
+ * Return module object
+ *
+ * @param _module module name
+ * @returns Object
+ */
 
 Modules.prototype.Module = function(_module)
 {
-    if(_module == undefined) return null;
-    _module = _module.toLowerCase();
+    if(_module === undefined){
+        return null;
+    }
 
-    if(_.has(this.loaded_modules, _module))
+    if(this.loaded_modules.hasOwnProperty(_module))
     {
         return this.loaded_modules[_module];
     }
 
-    return null;
-};
-
-Modules.prototype.Info = function(_module)
-{
-    if(_module == undefined) return null;
-    _module = _module.toLowerCase();
-
-    if(_module != null && _.has(_module, "info"))
+    if(this.loaded_system_modules.hasOwnProperty(_module))
     {
-        return _module['info'];
+        return this.loaded_system_modules[_module];
     }
 
     return null;
 };
 
+/**
+ * Return model instance
+ *
+ * @param module_name Module name
+ * @param model Model name
+ * @returns Model instance
+ */
+
 Modules.prototype.Model = function(module_name, model){
 
-    if(model == undefined) return null;
+    if(model === undefined){
+        return null;
+    }
+
     var _module = this.Module(module_name);
 
-    if(_module != null && _.has(_module, lizard.get('models dir')))
+    if(_module !== null && _module.hasOwnProperty(lizard.get('models dir')))
     {
-        if(!_.has(_module, 'model_instance'))
+        if(!_module.hasOwnProperty('model_instance'))
+        {
             _module['model_instance'] = {};
+        }
 
-        if(_.has(_module['model_instance'], model)){
+        if(_module['model_instance'].hasOwnProperty(model))
+        {
             return _module['model_instance'][model];
         }
 
         var controller = lizard.Utils.GetByPath(model, _module[lizard.get('models dir')]);
 
-        if(controller != null)
+        if(controller !== null)
         {
             _module['model_instance'][model] = new controller();
             return _module['model_instance'][model];
@@ -137,18 +126,28 @@ Modules.prototype.Model = function(module_name, model){
     return null;
 };
 
+/**
+ * Return module component
+ *
+ * @param module_name Module name
+ * @param component Component name
+ * @returns Component class
+ */
+
 Modules.prototype.Component = function(module_name, component){
 
-    if(component == undefined) return null;
+    if(component === undefined){
+        return null;
+    }
+
     var _module = this.Module(module_name);
+    component   = component.toLowerCase();
 
-    component = component.toLowerCase();
-
-    if(_module != null && _.has(_module, lizard.get('component dir')))
+    if(_module !== null && _module.hasOwnProperty(lizard.get('component dir')))
     {
         var controller = lizard.Utils.GetByPath(component, _module[lizard.get('component dir')]);
 
-        if(controller != null)
+        if(controller !== null)
         {
             return controller;
         }
@@ -157,19 +156,28 @@ Modules.prototype.Component = function(module_name, component){
     return null;
 };
 
+/**
+ * Return module controller
+ *
+ * @param module_name Module name
+ * @param controller Controller name
+ * @returns Controller class
+ */
+
 Modules.prototype.Controller = function(module_name, controller){
 
-    if(controller == undefined) return null;
+    if(controller === undefined){
+        return null;
+    }
 
     var _module = this.Module(module_name);
+    controller  = controller.toLowerCase();
 
-    controller = controller.toLowerCase();
-
-    if(_module != null && _.has(_module, lizard.get('controllers dir')))
+    if(_module !== null && _module.hasOwnProperty(lizard.get('controllers dir')))
     {
         var controller = lizard.Utils.GetByPath(controller, _module[lizard.get('controllers dir')]);
 
-        if(controller != null)
+        if(controller !== null)
         {
             return controller;
         }

@@ -11,7 +11,7 @@ var Application  = function(){};
 var express      = require('express');
 
 /**
- * Инициализация сервера
+ * Server initialization
  * @param nextStep
  * @param configureCallback
  */
@@ -26,7 +26,6 @@ Application.prototype.init = function(nextStep)
 
     this.app.use(express.static(lizard.get('project dir') + '/'+lizard.get('static dir')));
 
-    //this.app.set('trust proxy', 1);
     this.app.use(cookieParser());
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: false }));
@@ -54,20 +53,21 @@ Application.prototype.init = function(nextStep)
 };
 
 /**
- * Установка кастомных паблик директорий
+ * Set static public directory
  * @param dir
  * @param url
  */
 Application.prototype.setPublic = function(dir, url){
 
-    if(url != undefined && url != "")
-        this.app.use(url, express.static(dir));
-    else
+    if(url !== undefined && url != ""){
+        this.app.use(url+"/", express.static(dir));
+    } else {
         this.app.use(express.static(dir));
+    }
 };
 
 /**
- * Старт сервера
+ * Start server
  */
 Application.prototype.start = function()
 {
@@ -90,24 +90,28 @@ Application.prototype.start = function()
         res.type('txt').send('Not found');
     });
 
-    /*this.app.use(function(error, req, res, next){
-        res.status(500);
+    if (process.env.NODE_ENV === "dev")
+    {
+        this.app.use(function(error, req, res, next){
+            res.status(500);
 
-        if (req.accepts('html'))
-        {
-            var view = new lizard.View(req, res);
-            view.locals.url = req.url;
-            view.render('500.html');
-            return;
-        }
+            if (req.accepts('html'))
+            {
+                var view = new lizard.View(req, res);
+                view.locals.url = req.url;
+                view.locals.error = error;
+                view.render('500.html');
+                return;
+            }
 
-        if (req.accepts('json')) {
-            res.send({ error: 'Internal Server Error' });
-            return;
-        }
+            if (req.accepts('json')) {
+                res.send({ error: 'Internal Server Error' });
+                return;
+            }
 
-        res.type('txt').send('Internal Server Error');
-    });*/
+            res.type('txt').send('Internal Server Error');
+        });
+    }
 
     this.server = this.app.listen(lizard.get('port'), function(){
         console.log('Lizard Web Application listening at 127.0.0.1:%s', lizard.get('port'))

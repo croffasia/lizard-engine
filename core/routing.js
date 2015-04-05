@@ -69,7 +69,15 @@ Routing.prototype.Mapping = function(){
                 {
                     if(modules[key]['routing'].hasOwnProperty(map_key))
                     {
-                        this.ApplyMapping(map_key, key+"."+modules[key]['routing'][map_key]);
+                        var route = modules[key]['routing'][map_key];
+
+                        if(route.indexOf(":") > -1){
+                            route = route.split(":")[0] + ":" + key + "." + route.split(":")[1];
+                        } else {
+                            route = key+"."+route;
+                        }
+
+                        this.ApplyMapping(map_key, route);
                     }
                 }
             }
