@@ -1,6 +1,6 @@
 {
   "name": "lizard-engine",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "NodeJS Web Application Framework / built on Express.js and MongoDB",
   "main": "index.js",
   "repository": {
